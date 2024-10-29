@@ -1,5 +1,8 @@
-import { User } from './user.model';
-import { Injectable, signal } from '@angular/core';
+import { LoadingService } from '../util/loading.service';
+import { ApiResponses } from '../util/api-responses.util';
+import { User, UserErrors } from './user.model';
+import { inject, Injectable, signal } from '@angular/core';
+import { WithLoading } from '../util/with-loading.decorator';
 
 type Pristine = {
   [k in keyof Pick<User, 'username' | 'email' | 'password'>]: boolean;
@@ -9,16 +12,23 @@ type Pristine = {
   providedIn: 'root',
 })
 export class SignupClientService {
-  _user = signal(new User({}));
+  //is used by withloading
+  public loadingService = inject(LoadingService);
 
-  _pristine = signal<Pristine>({ username: true, email: true, password: true });
+  private _user = signal(new User({}));
 
-  _inUse = signal({
-    email: [] as string[],
-    password: [] as string[],
+  private _pristine = signal<Pristine>({
+    username: true,
+    email: true,
+    password: true,
   });
 
-  user() {
+  private _inUse = signal({
+    email: [] as string[],
+    username: [] as string[],
+  });
+
+  get user() {
     return this._user.asReadonly();
   }
 
@@ -31,5 +41,83 @@ export class SignupClientService {
     this._user.update((current) => current.patch(partial));
   }
 
-  signup() {}
+  getUsernameErrorMessage() {
+    const user = this.user();
+    const pristine = this._pristine();
+
+    if (pristine.username) return new Set();
+    return user.validateUsername(this._inUse().username);
+  }
+
+  getEmailErrorMessage() {
+    const user = this.user();
+    const pristine = this._pristine();
+    if (pristine.email) return new Set();
+    return user.validateEmail(this._inUse().email);
+  }
+
+  getPasswordErrorMessage() {
+    const user = this.user();
+    const pristine = this._pristine();
+    if (pristine.password) return new Set();
+    return user.validatePassword();
+  }
+
+  isUserValid() {
+    if (this.getUsernameErrorMessage().size > 0) {
+      return false;
+    }
+    if (this.getEmailErrorMessage().size > 0) {
+      return false;
+    }
+    if (this.getPasswordErrorMessage().size > 0) {
+      return false;
+    }
+    return true;
+  }
+
+  async signUp() {
+    if (this.isUserValid()) {
+      return await this.createUser();
+    }
+    this._pristine.set({ username: false, email: false, password: false });
+    return { message: ApiResponses.BadRequest };
+  }
+
+  @WithLoading()
+  async createUser() {
+    const response = await fetch('api/v1/user/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.user()),
+    });
+
+    const data = response.ok
+      ? { message: ApiResponses.Ok }
+      : await this.handlePostUserErrors(response);
+
+    return data;
+  }
+
+  private async handlePostUserErrors(response: Response) {
+    if (response.status === 400) {
+      const data = await response.json();
+      if (data.errors.includes(UserErrors.Username.InUse)) {
+        this._inUse.update((current) => ({
+          ...current,
+          username: [...current.username, this.user().username()],
+        }));
+      }
+      if (data.errors.includes(UserErrors.Email.InUse)) {
+        this._inUse.update((current) => ({
+          ...current,
+          email: [...current.email, this.user().email()],
+        }));
+      }
+      return { message: ApiResponses.BadRequest };
+    }
+    return { message: ApiResponses.Server };
+  }
 }
