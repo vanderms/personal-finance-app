@@ -1,11 +1,13 @@
 import { RestResponse } from 'client.types';
 
 export async function onRequestPost(context) {
+  const data = await context.request.json();
+
   const response: RestResponse = {
     status: 200,
     message: [],
     ok: true,
-    data: context.request.body,
+    data,
   };
 
   const headers = {
