@@ -1,1 +1,123 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-base: #fff;
+    --background-100: #f8f4f0;
+    --background-900: #201f24;
+
+    --neutral-100: #f2f2f2;
+    --neutral-300: #b3b3b3;
+    --neutral-500: #696868;
+    --neutral-900: #201f24;
+
+    --contrast-color: #98908b;
+    --green: #277c78;
+    --yellow: #f2cdac;
+    --cyan: #82c9d7;
+    --navy: #626070;
+    --red: #c94736;
+    --purple: #826cb0;
+    --turquoise: #597c7c;
+    --brown: #93674f;
+    --magenta: #934f6f;
+    --blue: #3f82b2;
+    --navv-grey: #97a0ac;
+    --army-green: #7f9161;
+    --pink: #af81ba;
+    --gold: #cab361;
+    --orange: #be6c49;
+    --white: #ffffff;
+
+    --font-sans: "Public Sans", sans-serif;
+  }
+
+  .text-preset-1 {
+    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .text-preset-2 {
+    font-weight: 700;
+    font-family: var(--font-sans);
+    line-height: 1.2;
+    font-size: 1.25rem;
+  }
+
+  .text-preset-3 {
+    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .text-preset-4 {
+    font-weight: 400;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .text-preset-4-bold {
+    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .text-preset-5 {
+    font-weight: 400;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .text-preset-5-bold {
+    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+}
+
+@layer components {
+  .input-field {
+    width: 100%;
+    position: relative;
+  }
+
+  .input-field :where(label) {
+    @apply w-full grid gap-1;
+  }
+
+  .input-field :where(label span) {
+    @apply text-preset-5-bold text-neutral-500;
+  }
+
+  .input-field :where(label input) {
+    @apply border border-contrast rounded-xl px-5;
+    height: 2.8125rem;
+  }
+
+  .input-field:has(.input-field__icon) :where(label input) {
+    padding-right: 3.25rem;
+  }
+
+  .input-field:has(.input-field__prefix) :where(label input) {
+    padding-left: 3.25rem;
+  }
+
+  .input-field__icon {
+    position: absolute;
+    margin-top: -1.875rem;
+    right: 1rem;
+  }
+
+  .input-field__hint {
+    @apply text-neutral-500;
+  }
+}

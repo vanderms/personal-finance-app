@@ -1,8 +1,8 @@
-import { LoadingService } from '../util/loading.service';
-import { ApiResponses } from '../util/api-responses.util';
+import { LoadingService } from '../util/services/loading.service';
+import { ApiResponses } from '../util/types/api-responses.type';
 import { User, UserErrors } from './user.model';
 import { inject, Injectable, signal } from '@angular/core';
-import { WithLoading } from '../util/with-loading.decorator';
+import { WithLoading } from '../util/decorators/with-loading.decorator';
 
 type Pristine = {
   [k in keyof Pick<User, 'username' | 'email' | 'password'>]: boolean;

@@ -1,1 +1,37 @@
-<p>signup works!</p>
+<div class="w-full">
+  <article class="bg-background-base px-5 py-6 rounded-xl">
+    <h1 class="text-preset-1">Sign Up</h1>
+    <form class="" novalidate>
+      <div class="input-field">
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" />
+        </label>
+      </div>
+
+      <div class="input-field">
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" />
+        </label>
+      </div>
+
+      <div class="input-field">
+        <label>
+          <span>Create Password</span>
+          <input type="password" name="password" />
+        </label>
+        <button
+          class="input-field__icon h-fit w-fit"
+          type="button"
+          [attr.aria-describedby]="'password-hint'"
+        >
+          <app-icon iconName="eye" />
+        </button>
+        <p class="text-preset-5 input-field__hint" id="password-hint">
+          Password must be at least 8 characters
+        </p>
+      </div>
+    </form>
+  </article>
+</div>

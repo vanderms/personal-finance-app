@@ -2,11 +2,20 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    title: 'Sign Up',
-    path: 'signup',
+    path: 'user',
     loadComponent: () =>
-      import('./user/pages/signup/signup.component').then(
-        (m) => m.SignupComponent
+      import('./user/pages/user-layout/user-layout.component').then(
+        (m) => m.UserLayoutComponent
       ),
+    children: [
+      {
+        title: 'Sign Up',
+        path: 'signup',
+        loadComponent: () =>
+          import('./user/pages/signup/signup.component').then(
+            (m) => m.SignupComponent
+          ),
+      },
+    ],
   },
 ];
