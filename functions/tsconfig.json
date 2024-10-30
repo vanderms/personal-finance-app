@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./api/v1",
     "target": "esnext",
     "module": "esnext",
     "lib": ["esnext"],
