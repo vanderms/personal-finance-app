@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "./api/v1",
+    "baseUrl": "./",
     "target": "esnext",
     "module": "esnext",
     "lib": ["esnext"],
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
   }
 }
