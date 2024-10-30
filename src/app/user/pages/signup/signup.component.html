@@ -3,7 +3,7 @@
     class="bg-background-base px-5 py-6 rounded-xl max-w-[35rem] mx-auto"
   >
     <h1 class="text-preset-1">Sign Up</h1>
-    <form class="grid gap-4 mt-8" novalidate>
+    <form class="grid gap-4 mt-8" novalidate (submit)="submitForm($event)">
       <div class="input-field">
         <label>
           <span>Name</span>
@@ -12,9 +12,16 @@
             type="text"
             name="name"
             (input)="setName(name.value)"
+            (blur)="blurName()"
             [value]="user().getUsername()"
+            [attr.aria-describedby]="usernameErrors() | idHashSet : 'name'"
           />
         </label>
+        @for (item of usernameErrors(); track item) {
+        <p class="input-field__error-message" [id]="item | IdHash : 'name'">
+          {{ item }}
+        </p>
+        }
       </div>
 
       <div class="input-field">
@@ -25,9 +32,16 @@
             type="email"
             name="email"
             (input)="setEmail(email.value)"
+            (blur)="blurEmail()"
             [value]="user().getEmail()"
+            [attr.aria-describedby]="emailErrors() | idHashSet : 'email'"
           />
         </label>
+        @for (item of emailErrors(); track item) {
+        <p class="input-field__error-message" [id]="item | IdHash : 'email'">
+          {{ item }}
+        </p>
+        }
       </div>
 
       <div class="input-field">
@@ -36,10 +50,15 @@
           <input
             #password
             (input)="setPassword(password.value)"
+            (blur)="blurPassword()"
             [value]="user().getPassword()"
             [type]="passwordType()"
             name="password"
-            [attr.aria-describedby]="'password-hint'"
+            [attr.aria-describedby]="
+              passwordErrors().size > 0
+                ? (passwordErrors() | idHashSet : 'password')
+                : 'password-hint'
+            "
           />
         </label>
         <button
@@ -52,9 +71,15 @@
         >
           <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
         </button>
+        @for (item of passwordErrors(); track item) {
+        <p class="input-field__error-message" [id]="item | IdHash : 'password'">
+          {{ item }}
+        </p>
+        } @empty {
         <p class="input-field__hint" id="password-hint">
           Password must be at least 8 characters
         </p>
+        }
       </div>
 
       <button class="button-primary mt-4">Create Account</button>

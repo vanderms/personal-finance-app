@@ -120,6 +120,10 @@
   .input-field__hint {
     @apply text-neutral-500 text-preset-5 text-right;
   }
+
+  .input-field__error-message {
+    @apply text-red text-preset-5-bold text-right;
+  }
 }
 
 @layer components {

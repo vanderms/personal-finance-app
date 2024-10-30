@@ -37,8 +37,14 @@ export class User {
 
   validateUsername(usernameInUse: string[] = []) {
     const errors: Set<string> = new Set();
-    if (this.username.length <= 4) errors.add(UserErrors.Username.Minlength);
-    if (this.username.length >= 16) errors.add(UserErrors.Username.Maxlength);
+
+    if (!this.username.trim()) {
+      errors.add(UserErrors.Username.Required);
+      return errors;
+    }
+
+    if (this.username.length < 4) errors.add(UserErrors.Username.Minlength);
+    if (this.username.length > 16) errors.add(UserErrors.Username.Maxlength);
     if (/\s/.test(this.username)) errors.add(UserErrors.Username.EmptySpace);
     if (usernameInUse.includes(this.username))
       errors.add(UserErrors.Username.InUse);
@@ -47,7 +53,13 @@ export class User {
 
   validatePassword() {
     const errors: Set<string> = new Set();
-    const validPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]{4,12}$/;
+
+    if (!this.password.trim()) {
+      errors.add(UserErrors.Password.Required);
+      return errors;
+    }
+
+    const validPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{8,}$/;
     if (!validPassword.test(this.password))
       errors.add(UserErrors.Password.Invalid);
     return errors;
@@ -55,6 +67,12 @@ export class User {
 
   validateEmail(emailInUse: string[] = []) {
     const errors: Set<string> = new Set();
+
+    if (!this.email.trim()) {
+      errors.add(UserErrors.Email.Required);
+      return errors;
+    }
+
     const validEmail =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!validEmail.test(this.email)) errors.add(UserErrors.Email.Invalid);
@@ -65,16 +83,20 @@ export class User {
 
 export const UserErrors = {
   Username: {
-    Minlength: 'user::username::minlength',
-    Maxlength: 'user::username::maxlength',
-    EmptySpace: 'user::username::emptyspace',
-    InUse: 'user::username::inuse',
+    Required: 'Name is required',
+    Minlength: 'Name must be at least 4 characters long',
+    Maxlength: 'Name must not exceed 16 characters',
+    EmptySpace: 'No spaces allowed in the name',
+    InUse: 'This name is already taken',
   },
   Email: {
-    Invalid: 'user::email::invalid',
-    InUse: 'user::email::inuse',
+    Required: 'Email is required',
+    Invalid: 'Invalid email address',
+    InUse: 'Email address is already registered by another user',
   },
   Password: {
-    Invalid: 'user::password::invalid',
+    Required: 'Password is required',
+    Invalid:
+      'Password must be at least 8 characters long and contain both letters and numbers',
   },
 };

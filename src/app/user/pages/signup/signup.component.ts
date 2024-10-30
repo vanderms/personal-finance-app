@@ -8,12 +8,22 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../../util/components/icon/icon.component';
 import { RouterModule } from '@angular/router';
-import { SignupClientService } from '../../signup.service';
+import { SignupClientService } from './signup.service';
+import {
+  IdHashPipe,
+  IdHashSetPipe,
+} from '../../../util/pipes/id-hash-pipe.pipe';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, IconComponent, RouterModule],
+  imports: [
+    CommonModule,
+    IconComponent,
+    RouterModule,
+    IdHashPipe,
+    IdHashSetPipe,
+  ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,11 +43,40 @@ export class SignupComponent {
     this.signupService.patchUser({ username });
   }
 
+  blurName() {
+    this.signupService.patchTouched({ username: true });
+  }
+
   setPassword(password: string) {
     this.signupService.patchUser({ password });
   }
 
+  blurPassword() {
+    this.signupService.patchTouched({ password: true });
+  }
+
   setEmail(email: string) {
     this.signupService.patchUser({ email });
+  }
+
+  blurEmail() {
+    this.signupService.patchTouched({ email: true });
+  }
+
+  get usernameErrors() {
+    return this.signupService.getUsernameErrorMessage();
+  }
+
+  get emailErrors() {
+    return this.signupService.getEmailErrorMessage();
+  }
+
+  get passwordErrors() {
+    return this.signupService.getPasswordErrorMessage();
+  }
+
+  submitForm(e: Event) {
+    e.preventDefault();
+    this.signupService.signUp();
   }
 }

@@ -6,12 +6,8 @@ import { djb2 } from '../functions/djb2';
   standalone: true,
 })
 export class IdHashSetPipe implements PipeTransform {
-  transform(value: Set<string>, fieldName: string): Set<string> {
-    const hashSet = new Set<string>();
-    value.forEach((item) => {
-      hashSet.add(djb2(fieldName + item));
-    });
-    return hashSet;
+  transform(value: Set<string>, fieldName: string): string {
+    return [...value].map((item) => `id-${fieldName}-${djb2(item)}`).join(' ');
   }
 }
 
@@ -21,6 +17,6 @@ export class IdHashSetPipe implements PipeTransform {
 })
 export class IdHashPipe implements PipeTransform {
   transform(value: string, fieldName: string): string {
-    return djb2(fieldName + value);
+    return `id-${fieldName}-${djb2(value)}`;
   }
 }
