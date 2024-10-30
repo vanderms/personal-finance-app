@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  signal
+  signal,
 } from '@angular/core';
 import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
@@ -15,11 +15,10 @@ import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
-  @Input({ required: true }) iconName: string = '';
   svgContent = signal<string | null>(null);
 
-  ngOnInit(): void {
-    fetch(`icons/${this.iconName}.svg`)
+  @Input({ required: true }) set iconName(value: string) {
+    fetch(`icons/${value}.svg`)
       .then((response) => response.text())
       .then((svg) => this.svgContent.set(svg));
   }

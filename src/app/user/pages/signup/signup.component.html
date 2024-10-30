@@ -1,37 +1,70 @@
-<div class="w-full">
-  <article class="bg-background-base px-5 py-6 rounded-xl">
+<div class="w-full px-4 pt-[7.25rem]">
+  <article
+    class="bg-background-base px-5 py-6 rounded-xl max-w-[35rem] mx-auto"
+  >
     <h1 class="text-preset-1">Sign Up</h1>
-    <form class="" novalidate>
+    <form class="grid gap-4 mt-8" novalidate>
       <div class="input-field">
         <label>
           <span>Name</span>
-          <input type="text" name="name" />
+          <input
+            #name
+            type="text"
+            name="name"
+            (input)="setName(name.value)"
+            [value]="user().getUsername()"
+          />
         </label>
       </div>
 
       <div class="input-field">
         <label>
           <span>Email</span>
-          <input type="email" name="email" />
+          <input
+            #email
+            type="email"
+            name="email"
+            (input)="setEmail(email.value)"
+            [value]="user().getEmail()"
+          />
         </label>
       </div>
 
       <div class="input-field">
         <label>
           <span>Create Password</span>
-          <input type="password" name="password" />
+          <input
+            #password
+            (input)="setPassword(password.value)"
+            [value]="user().getPassword()"
+            [type]="passwordType()"
+            name="password"
+            [attr.aria-describedby]="'password-hint'"
+          />
         </label>
         <button
           class="input-field__icon h-fit w-fit"
           type="button"
-          [attr.aria-describedby]="'password-hint'"
+          aria-label="show password"
+          [attr.aria-pressed]="passwordVisible()"
+          (mousedown)="passwordVisible.set(true)"
+          (mouseup)="passwordVisible.set(false)"
         >
-          <app-icon iconName="eye" />
+          <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
         </button>
-        <p class="text-preset-5 input-field__hint" id="password-hint">
+        <p class="input-field__hint" id="password-hint">
           Password must be at least 8 characters
         </p>
       </div>
+
+      <button class="button-primary mt-4">Create Account</button>
     </form>
+
+    <p class="text-preset-4 text-neutral-500 text-center mt-8">
+      Already have an account?
+      <a routerLink="/user/login" class="text-preset-bold text-neutral-900">
+        Login
+      </a>
+    </p>
   </article>
 </div>

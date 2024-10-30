@@ -118,6 +118,13 @@
   }
 
   .input-field__hint {
-    @apply text-neutral-500;
+    @apply text-neutral-500 text-preset-5 text-right;
+  }
+}
+
+@layer components {
+  .button-primary {
+    @apply bg-neutral-900 text-white grid place-items-center rounded-lg text-preset-4-bold hover:bg-neutral-500;
+    height: 3.3125rem;
   }
 }

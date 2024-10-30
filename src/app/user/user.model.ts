@@ -1,39 +1,46 @@
-export class User {
-  private _id: string = '';
-  private _username: string = '';
-  private _email: string = '';
-  private _password: string = '';
+export interface UserBuilder {
+  id?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+}
 
-  constructor(builder: Partial<User>) {
+export class User {
+  private id: string = '';
+  private username: string = '';
+  private email: string = '';
+  private password: string = '';
+
+  constructor(builder: UserBuilder = {}) {
     Object.assign(this, builder);
   }
 
-  id() {
-    return this._id;
+  getId() {
+    return this.id;
   }
 
-  username() {
-    return this._username;
+  getUsername() {
+    return this.username;
   }
 
-  email() {
-    return this._email;
+  getEmail() {
+    return this.email;
   }
 
-  password() {
-    return this._password;
+  getPassword() {
+    return this.password;
   }
 
-  patch(values: Partial<User>): User {
-    return Object.assign(new User(this), values);
+  patch(values: UserBuilder): User {
+    return new User({ ...this, ...values });
   }
 
   validateUsername(usernameInUse: string[] = []) {
     const errors: Set<string> = new Set();
-    if (this._username.length <= 4) errors.add(UserErrors.Username.Minlength);
-    if (this._username.length >= 16) errors.add(UserErrors.Username.Maxlength);
-    if (/\s/.test(this._username)) errors.add(UserErrors.Username.EmptySpace);
-    if (usernameInUse.includes(this._username))
+    if (this.username.length <= 4) errors.add(UserErrors.Username.Minlength);
+    if (this.username.length >= 16) errors.add(UserErrors.Username.Maxlength);
+    if (/\s/.test(this.username)) errors.add(UserErrors.Username.EmptySpace);
+    if (usernameInUse.includes(this.username))
       errors.add(UserErrors.Username.InUse);
     return errors;
   }
@@ -41,7 +48,7 @@ export class User {
   validatePassword() {
     const errors: Set<string> = new Set();
     const validPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]{4,12}$/;
-    if (!validPassword.test(this._password))
+    if (!validPassword.test(this.password))
       errors.add(UserErrors.Password.Invalid);
     return errors;
   }
@@ -50,8 +57,8 @@ export class User {
     const errors: Set<string> = new Set();
     const validEmail =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    if (!validEmail.test(this._email)) errors.add(UserErrors.Email.Invalid);
-    if (emailInUse.includes(this._email)) errors.add(UserErrors.Email.InUse);
+    if (!validEmail.test(this.email)) errors.add(UserErrors.Email.Invalid);
+    if (emailInUse.includes(this.email)) errors.add(UserErrors.Email.InUse);
     return errors;
   }
 }

@@ -1,11 +1,11 @@
 import { LoadingService } from '../util/services/loading.service';
 import { ApiResponses } from '../util/types/api-responses.type';
-import { User, UserErrors } from './user.model';
+import { UserBuilder, User, UserErrors } from './user.model';
 import { inject, Injectable, signal } from '@angular/core';
 import { WithLoading } from '../util/decorators/with-loading.decorator';
 
 type Pristine = {
-  [k in keyof Pick<User, 'username' | 'email' | 'password'>]: boolean;
+  [k in keyof Pick<UserBuilder, 'username' | 'email' | 'password'>]: boolean;
 };
 
 @Injectable({
@@ -32,7 +32,7 @@ export class SignupClientService {
     return this._user.asReadonly();
   }
 
-  patchUser(partial: Partial<User>) {
+  patchUser(partial: UserBuilder) {
     const pristine: Partial<Pristine> = {};
     if ('username' in partial) pristine.username = true;
     if ('password' in partial) pristine.password = true;
@@ -107,13 +107,13 @@ export class SignupClientService {
       if (data.errors.includes(UserErrors.Username.InUse)) {
         this._inUse.update((current) => ({
           ...current,
-          username: [...current.username, this.user().username()],
+          username: [...current.username, this.user().getUsername()],
         }));
       }
       if (data.errors.includes(UserErrors.Email.InUse)) {
         this._inUse.update((current) => ({
           ...current,
-          email: [...current.email, this.user().email()],
+          email: [...current.email, this.user().getEmail()],
         }));
       }
       return { message: ApiResponses.BadRequest };
