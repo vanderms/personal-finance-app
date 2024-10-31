@@ -19,7 +19,7 @@ export class SignupRepositoryImpl implements SignupRepository {
   ): Promise<UserEntity[]> {
     const stmt = this.db
       .prepare(
-        'SELECT id, name, email FROM user u WHERE u.name = ?1 AND u.email = ?2'
+        'SELECT id, username, email FROM user u WHERE u.name = ?1 AND u.email = ?2'
       )
       .bind(name, email);
 
