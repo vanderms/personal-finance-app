@@ -18,14 +18,15 @@ export const createInternalServerErrorResponse = () => {
   });
 };
 
-export const createBadRequestErrorResponse = (message: string) => {
-  const response: RestResponse = {
-    status: 400,
-    ok: false,
-    message: message.split('|'),
-  };
-  return new Response(JSON.stringify(response), {
-    headers,
-    status: response.status,
-  });
-};
+export class BadRequestResponse extends Response {
+  constructor(error: Error) {
+    super(
+      JSON.stringify({
+        status: 400,
+        ok: false,
+        message: error.message.split('|'),
+      }),
+      { headers, status: 400 }
+    );
+  }
+}

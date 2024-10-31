@@ -1,12 +1,12 @@
 import { RestResponse, UserDTO } from 'types/client';
+import { BadRequestError } from 'util/errors/bad-request.error';
 import {
-  createBadRequestErrorResponse,
-  createInternalServerErrorResponse,
+  BadRequestResponse,
+  createInternalServerErrorResponse
 } from 'util/errors/responses';
+import { UserEntity } from '../user.entity';
 import { UserRepository } from '../user.repository';
 import { SignupService } from './signup.service';
-import { BadRequestError } from 'util/errors/bad-request.error';
-import { UserEntity } from '../user.entity';
 
 interface Env {
   DB: D1Database;
@@ -38,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     //
   } catch (error) {
     if (error.name === BadRequestError.name) {
-      return createBadRequestErrorResponse(error.name);
+      return new BadRequestResponse(error);
     }
     console.log(`[LOGGING FROM /user/signup]: error: ${error.message}`);
     return createInternalServerErrorResponse();
