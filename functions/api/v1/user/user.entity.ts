@@ -5,6 +5,10 @@ export class UserEntity extends User {
     super(builder);
   }
 
+  patch(values: UserDTO): UserEntity {
+    return new UserEntity({ ...this, ...values });
+  }
+
   toJson() {
     return {
       id: this.id,

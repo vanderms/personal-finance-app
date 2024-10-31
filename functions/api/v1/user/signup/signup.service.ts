@@ -1,9 +1,11 @@
 import { UserDTO } from 'types/client';
 import { BadRequestError } from 'util/errors/bad-request.error';
-import { UserEntity } from './entity';
+import { UserEntity } from '../user.entity';
 
 export interface SignupRepository {
-  getUserByNameAndEmail(name: string, email: string): Promise<UserEntity[]>;
+  getUsersUsingNameOrEmail(name: string, email: string): Promise<UserEntity[]>;
+
+  saveUser(user: UserEntity): Promise<UserEntity>;
 }
 
 export class SignupService {
@@ -24,24 +26,26 @@ export class SignupService {
     const errors = await this.validateUser(user);
 
     if (errors.length > 0) {
-      const message = errors.join('|');
-      throw new BadRequestError(message);
+      throw new BadRequestError(errors.join('|'));
     }
 
-    return user;
+    const created = await this.signupRepository.saveUser(user);
+
+    return created;
   }
 
   private async validateUser(user: UserEntity): Promise<string[]> {
-    const usersConflict = await this.signupRepository.getUserByNameAndEmail(
-      user.getUsername(),
-      user.getEmail()
-    );
+    const usersUsingNameOrEmail =
+      await this.signupRepository.getUsersUsingNameOrEmail(
+        user.getUsername(),
+        user.getEmail()
+      );
 
-    const nameInUse = usersConflict
+    const nameInUse = usersUsingNameOrEmail
       .filter((other) => other.getUsername() === user.getUsername())
       .map(() => user.getUsername());
 
-    const emailInUse = usersConflict
+    const emailInUse = usersUsingNameOrEmail
       .filter((other) => other.getEmail() === user.getEmail())
       .map(() => user.getEmail());
 

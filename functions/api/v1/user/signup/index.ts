@@ -3,18 +3,20 @@ import {
   createBadRequestErrorResponse,
   createInternalServerErrorResponse,
 } from 'util/errors/responses';
-import { SignupRepositoryImpl } from './repository';
-import { SignupService } from './service';
+import { UserRepository } from '../user.repository';
+import { SignupService } from './signup.service';
 import { BadRequestError } from 'util/errors/bad-request.error';
-import { UserEntity } from './entity';
+import { UserEntity } from '../user.entity';
 
-export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (
-  context
-) => {
+interface Env {
+  DB: D1Database;
+}
+
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: UserDTO = await context.request.json();
 
-    const signupRepository = SignupRepositoryImpl.getInstance(context.env.DB);
+    const signupRepository = UserRepository.getInstance(context.env.DB);
 
     const signupService = SignupService.getInstance(signupRepository);
 
