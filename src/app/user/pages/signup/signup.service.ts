@@ -90,7 +90,7 @@ export class SignupService {
     const user = this.user.value;
 
     try {
-      const response = await this.httpService.post('user/login', user);
+      const response = await this.httpService.post('user/signup', user);
 
       if (response.ok) {
         await this.alertService.push(this.feedback.Ok);
