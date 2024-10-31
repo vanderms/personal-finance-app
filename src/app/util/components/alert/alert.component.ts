@@ -14,7 +14,9 @@ import { map, tap } from 'rxjs';
   selector: 'app-alert',
   standalone: true,
   imports: [CommonModule],
-  providers: [{ provide: AlertService, useFactory: AlertService.getInstance }],
+  providers: [
+    { provide: AlertService, useFactory: () => AlertService.getInstance() },
+  ],
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +39,7 @@ export class AlertComponent {
   );
 
   onClose() {
+    console.log('on close component');
     const action = this.getDialog().returnValue;
     this.alertService.onClose(action);
   }

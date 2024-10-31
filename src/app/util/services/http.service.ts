@@ -1,6 +1,6 @@
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { FailedRequestError } from '../errors/failed-request.error';
-import { InvalidResponseError } from '../errors/invalid-response.error';
+import { FailedRequestError } from '../exceptions/failed-request.error';
+import { InvalidResponseError } from '../exceptions/invalid-response.error';
 import { isRestResponse, RestResponse } from '../types/api-responses.type';
 
 export class HttpService {

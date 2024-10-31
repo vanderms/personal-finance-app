@@ -16,24 +16,26 @@ export class AlertService {
     return this.instance;
   }
 
-  private alerts = new BehaviorSubject<
+  private state = new BehaviorSubject<
     Array<{ alert: Alert; resolve: (value: string) => void }>
   >([]);
 
+  alerts$ = this.state.pipe(
+    map((alerts) => alerts.map((alert) => alert.alert))
+  );
+
   getAlerts() {
-    return this.alerts.pipe(
-      map((alerts) => alerts.map((alert) => alert.alert))
-    );
+    return this.alerts$;
   }
 
   push(alert: Alert) {
     return new Promise((resolve) => {
-      this.alerts.next([...this.alerts.value, { alert, resolve }]);
+      this.state.next([...this.state.value, { alert, resolve }]);
     });
   }
 
   onClose(action: string) {
-    const next = this.alerts.value[0];
+    const next = this.state.value[0];
 
     if (!next) {
       const errorMessage =
@@ -42,6 +44,6 @@ export class AlertService {
     }
 
     next.resolve(action);
-    this.alerts.next(this.alerts.value.slice(1));
+    this.state.next(this.state.value.slice(1));
   }
 }

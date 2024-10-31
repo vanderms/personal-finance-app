@@ -1,6 +1,6 @@
-<dialog #dialog>
+<dialog #dialog (close)="onClose()">
   @if(alert$ | async; as alert){
   <h2>{{ alert.title }}</h2>
-  <p>{{ alert.title }}</p>
+  <p>{{ alert.text }}</p>
   }
 </dialog>
