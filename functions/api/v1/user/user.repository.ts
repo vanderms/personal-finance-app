@@ -22,7 +22,7 @@ export class UserRepository implements SignupRepository {
 
     const id = crypto.randomUUID();
 
-    this.db
+    await this.db
       .prepare(
         ` INSERT INTO user (id, username, email, password, salt) VALUES (?, ?, ?, ?, ?)`
       )
