@@ -23,7 +23,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (
     const headers = { 'content-type': 'application/json' };
 
     const response: RestResponse<UserEntity> = {
-      status: 204,
+      status: 201,
       ok: true,
       message: [],
       data,
