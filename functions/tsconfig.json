@@ -5,5 +5,7 @@
     "module": "esnext",
     "lib": ["esnext"],
     "types": ["@cloudflare/workers-types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   }
 }

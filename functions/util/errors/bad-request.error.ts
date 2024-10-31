@@ -1,8 +1,9 @@
-export class InvalidStateError extends Error {
-  static name = 'InvalidStateError';
+export class BadRequestError extends Error {
+  static name: 'BadRequestError';
+
   constructor(message: string) {
     super(message);
-    this.name = InvalidStateError.name;
+    this.name = BadRequestError.name;
     if (typeof Error.captureStackTrace === 'function') {
       Error.captureStackTrace(this, this.constructor);
     }

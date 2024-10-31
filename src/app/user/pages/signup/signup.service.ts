@@ -4,10 +4,10 @@ import { EnvironmentToken } from '../../../../env/env.token';
 import { AlertService } from '../../../util/components/alert/alert.service';
 import { LoadingService } from '../../../util/services/loading.service';
 import { ApiResponses } from '../../../util/types/api-responses.type';
-import { User, UserBuilder, UserErrors } from '../../user.model';
+import { User, UserDTO, UserErrors } from '../../user.model';
 
 type Touched = {
-  [k in keyof Pick<UserBuilder, 'username' | 'email' | 'password'>]: boolean;
+  [k in keyof Pick<UserDTO, 'username' | 'email' | 'password'>]: boolean;
 };
 
 @Injectable({
@@ -40,7 +40,7 @@ export class SignupClientService {
     return this._user.asReadonly();
   }
 
-  patchUser(partial: UserBuilder) {
+  patchUser(partial: UserDTO) {
     this._user.update((current) => current.patch(partial));
   }
 

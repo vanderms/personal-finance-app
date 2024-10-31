@@ -1,40 +1,43 @@
-import { RestResponse, User } from 'client.types';
-import { InvalidStateError } from 'util/errors/invalid-state.error';
+import { RestResponse, UserDTO } from 'types/client';
+import {
+  createBadRequestErrorResponse,
+  createInternalServerErrorResponse,
+} from 'util/errors/responses';
+import { SignupRepositoryImpl } from './repository';
+import { SignupService } from './service';
+import { BadRequestError } from 'util/errors/bad-request.error';
+import { UserEntity } from './entity';
 
 export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (
   context
 ) => {
   try {
-    const data: User = await context.request.json();
+    const dto: UserDTO = await context.request.json();
 
-    const response: RestResponse<User> = {
-      status: 200,
-      message: [],
+    const signupRepository = SignupRepositoryImpl.getInstance(context.env.DB);
+
+    const signupService = SignupService.getInstance(signupRepository);
+
+    const data = await signupService.signup(dto);
+
+    const headers = { 'content-type': 'application/json' };
+
+    const response: RestResponse<UserEntity> = {
+      status: 204,
       ok: true,
+      message: [],
       data,
     };
 
-    const headers = {
-      'content-type': 'application/json',
-    };
-
-    throw new InvalidStateError('Teste');
-
-    return new Response(JSON.stringify(response), { headers, status: 200 });
+    return new Response(JSON.stringify(response), {
+      headers,
+      status: response.status,
+    });
+    //
   } catch (error) {
-    switch (error.name) {
-      case 'InvalidStateError':
-        return new Response(JSON.stringify({ error: 'Hy there' }), {
-          headers: {
-            'content-type': 'application/json',
-          },
-        });
-      default:
-        return new Response(JSON.stringify({ error: 'Something wrong' }), {
-          headers: {
-            'content-type': 'application/json',
-          },
-        });
+    if (error.name === BadRequestError.name) {
+      return createBadRequestErrorResponse(error.name);
     }
+    return createInternalServerErrorResponse();
   }
 };

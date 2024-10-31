@@ -1,4 +1,4 @@
-export interface UserBuilder {
+export interface UserDTO {
   id?: string;
   username?: string;
   email?: string;
@@ -6,12 +6,12 @@ export interface UserBuilder {
 }
 
 export class User {
-  private id: string = '';
-  private username: string = '';
-  private email: string = '';
-  private password: string = '';
+  protected id: string = '';
+  protected username: string = '';
+  protected email: string = '';
+  protected password: string = '';
 
-  constructor(builder: UserBuilder = {}) {
+  constructor(builder: UserDTO = {}) {
     Object.assign(this, builder);
   }
 
@@ -31,7 +31,7 @@ export class User {
     return this.password;
   }
 
-  patch(values: UserBuilder): User {
+  patch(values: UserDTO): User {
     return new User({ ...this, ...values });
   }
 
@@ -78,6 +78,15 @@ export class User {
     if (!validEmail.test(this.email)) errors.add(UserErrors.Email.Invalid);
     if (emailInUse.includes(this.email)) errors.add(UserErrors.Email.InUse);
     return errors;
+  }
+
+  toJson(): UserDTO {
+    return {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      password: this.password,
+    };
   }
 }
 
