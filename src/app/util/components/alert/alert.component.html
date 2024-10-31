@@ -1,1 +1,6 @@
-<p>alert works!</p>
+<dialog #dialog>
+  @if(alert$ | async; as alert){
+  <h2>{{ alert.title }}</h2>
+  <p>{{ alert.title }}</p>
+  }
+</dialog>

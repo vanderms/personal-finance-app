@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { BehaviorSubject, map } from 'rxjs';
 
 export interface Alert {
   title: string;
@@ -8,22 +8,32 @@ export interface Alert {
   secondaryAction?: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
 export class AlertService {
-  alerts = signal<Array<{ alert: Alert; resolve: (value: string) => void }>>(
-    []
-  );
+  static instance?: AlertService;
+
+  static getInstance() {
+    if (!this.instance) this.instance = new AlertService();
+    return this.instance;
+  }
+
+  private alerts = new BehaviorSubject<
+    Array<{ alert: Alert; resolve: (value: string) => void }>
+  >([]);
+
+  getAlerts() {
+    return this.alerts.pipe(
+      map((alerts) => alerts.map((alert) => alert.alert))
+    );
+  }
 
   push(alert: Alert) {
     return new Promise((resolve) => {
-      this.alerts.update((current) => [...current, { alert, resolve }]);
+      this.alerts.next([...this.alerts.value, { alert, resolve }]);
     });
   }
 
   onClose(action: string) {
-    const next = this.alerts()[0];
+    const next = this.alerts.value[0];
 
     if (!next) {
       const errorMessage =
@@ -32,6 +42,6 @@ export class AlertService {
     }
 
     next.resolve(action);
-    this.alerts.update((current) => current.slice(1));
+    this.alerts.next(this.alerts.value.slice(1));
   }
 }

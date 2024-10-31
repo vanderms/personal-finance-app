@@ -2,7 +2,7 @@ import { RestResponse, UserDTO } from 'types/client';
 import { BadRequestError } from 'util/errors/bad-request.error';
 import {
   BadRequestResponse,
-  createInternalServerErrorResponse
+  createInternalServerErrorResponse,
 } from 'util/errors/responses';
 import { UserEntity } from '../user.entity';
 import { UserRepository } from '../user.repository';
@@ -37,7 +37,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
     //
   } catch (error) {
-    if (error.name === BadRequestError.name) {
+    if (error instanceof BadRequestError) {
       return new BadRequestResponse(error);
     }
     console.log(`[LOGGING FROM /user/signup]: error: ${error.message}`);

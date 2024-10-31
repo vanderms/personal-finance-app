@@ -1,166 +1,127 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { EnvironmentToken } from '../../../../env/env.token';
+import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
 import { AlertService } from '../../../util/components/alert/alert.service';
-import { LoadingService } from '../../../util/services/loading.service';
-import { ApiResponses } from '../../../util/types/api-responses.type';
+import { HttpService } from '../../../util/services/http.service';
 import { User, UserDTO, UserErrors } from '../../user.model';
 
 type Touched = {
   [k in keyof Pick<UserDTO, 'username' | 'email' | 'password'>]: boolean;
 };
 
-@Injectable({
-  providedIn: 'root',
-})
-export class SignupClientService {
-  //is used by withloading
-  public loadingService = inject(LoadingService);
+export class SignupService {
+  static instance?: SignupService;
 
-  private alertService = inject(AlertService);
+  static getInstance(httpService: HttpService, alertService: AlertService) {
+    if (!this.instance)
+      this.instance = new SignupService(httpService, alertService);
+    return this.instance;
+  }
 
-  private routerService = inject(Router);
+  private constructor(
+    private httpService: HttpService,
+    private alertService: AlertService
+  ) {}
 
-  private env = inject(EnvironmentToken);
+  private user = new BehaviorSubject(new User());
 
-  private _user = signal(new User({}));
+  patchUser(partial: UserDTO) {
+    this.user.next(this.user.value.patch(partial));
+  }
 
-  private _touched = signal<Touched>({
+  private touched = new BehaviorSubject<Touched>({
     username: false,
     email: false,
     password: false,
   });
 
-  private _inUse = signal({
+  patchTouched(partial: Touched) {
+    this.touched.next({ ...this.touched.value, ...partial });
+  }
+
+  private inUse = new BehaviorSubject({
     email: [] as string[],
     username: [] as string[],
   });
 
-  get user() {
-    return this._user.asReadonly();
+  private errors = combineLatest([this.user, this.touched, this.inUse]).pipe(
+    map(([user, touched, inUse]) => {
+      const username = touched.username
+        ? user.validateUsername(inUse.username)
+        : new Set<string>();
+
+      const email = touched.email
+        ? user.validateEmail(inUse.email)
+        : new Set<string>();
+
+      const password = touched.password
+        ? user.validatePassword()
+        : new Set<string>();
+
+      return { username, email, password };
+    })
+  );
+
+  private state = combineLatest([this.user, this.errors]).pipe(
+    map(([user, errors]) => ({ user, errors }))
+  );
+
+  getState() {
+    return this.state;
   }
 
-  patchUser(partial: UserDTO) {
-    this._user.update((current) => current.patch(partial));
-  }
+  private isUserInvalid = combineLatest([this.user, this.inUse]).pipe(
+    map(([user, inUse]) => {
+      return (
+        user.validateUsername(inUse.username).size ||
+        user.validateEmail(inUse.email).size ||
+        user.validatePassword().size
+      );
+    })
+  );
 
-  patchTouched(partial: Touched) {
-    this._touched.update((current) => ({ ...current, ...partial }));
-  }
+  async signUp(): Promise<boolean> {
+    const isInvalid = await firstValueFrom(this.isUserInvalid);
 
-  private usernameErrorMessage = computed(() => {
-    const user = this.user();
-    const touched = this._touched();
-    console.log(user.getUsername(), touched.username);
-
-    if (!touched.username) return new Set<string>();
-    return user.validateUsername(this._inUse().username);
-  });
-
-  getUsernameErrorMessage() {
-    return this.usernameErrorMessage;
-  }
-
-  private emailErrorMessage = computed(() => {
-    const user = this.user();
-    const touched = this._touched();
-    if (!touched.email) return new Set<string>();
-    return user.validateEmail(this._inUse().email);
-  });
-
-  getEmailErrorMessage() {
-    return this.emailErrorMessage;
-  }
-
-  passwordErrorMessage = computed(() => {
-    const user = this.user();
-    const touched = this._touched();
-    if (!touched.password) return new Set<string>();
-    return user.validatePassword();
-  });
-
-  getPasswordErrorMessage() {
-    return this.passwordErrorMessage;
-  }
-
-  isUserValid = computed(() => {
-    const user = this.user();
-    const inUse = this._inUse();
-
-    if (user.validateUsername(inUse.username).size > 0) {
+    if (isInvalid) {
+      const [username, email, password] = [true, true, true];
+      this.touched.next({ username, email, password });
       return false;
     }
 
-    if (user.validateEmail(inUse.email).size > 0) {
-      return false;
-    }
+    const user = this.user.value;
 
-    if (user.validatePassword().size > 0) {
-      return false;
-    }
-    return true;
-  });
+    try {
+      const response = await this.httpService.post('user/login', user);
 
-  async signUp() {
-    if (!this.isUserValid()) {
-      return this._touched.set({
-        username: true,
-        email: true,
-        password: true,
-      });
-    }
-
-    switch ((await this.createUser()).message) {
-      case ApiResponses.Ok:
-        await this.alertService.push(this.errorMessages.Ok);
-        return this.routerService.navigate(['/user/login']);
-
-      case ApiResponses.BadRequest:
-        return await this.alertService.push(this.errorMessages.BadRequest);
-
-      case ApiResponses.Unknown: {
-        return await this.alertService.push(this.errorMessages.Unknown);
+      if (response.ok) {
+        await this.alertService.push(this.feedback.Ok);
+        return true;
       }
-    }
+
+      if (response.status === 400) {
+        if (response.message.includes(UserErrors.Username.InUse)) {
+          this.inUse.next({
+            ...this.inUse.value,
+            username: [...this.inUse.value.username, user.getUsername()],
+          });
+        }
+
+        if (response.message.includes(UserErrors.Email.InUse)) {
+          this.inUse.next({
+            ...this.inUse.value,
+            email: [...this.inUse.value.username, user.getEmail()],
+          });
+        }
+
+        await this.alertService.push(this.feedback.BadRequest);
+        return false;
+      }
+    } catch (err) {}
+
+    await this.alertService.push(this.feedback.Unknown);
+    return false;
   }
 
-  async createUser() {
-    const response = await fetch(`${this.env.ApiRoute}/user/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.user()),
-    });
-
-    const data = response.ok
-      ? { message: ApiResponses.Ok }
-      : await this.handlePostUserErrors(response);
-
-    return data;
-  }
-
-  private async handlePostUserErrors(response: Response) {
-    if (response.status === 400) {
-      const data = await response.json();
-      if (data.errors.includes(UserErrors.Username.InUse)) {
-        this._inUse.update((current) => ({
-          ...current,
-          username: [...current.username, this.user().getUsername()],
-        }));
-      }
-      if (data.errors.includes(UserErrors.Email.InUse)) {
-        this._inUse.update((current) => ({
-          ...current,
-          email: [...current.email, this.user().getEmail()],
-        }));
-      }
-      return { message: ApiResponses.BadRequest };
-    }
-    return { message: ApiResponses.Unknown };
-  }
-
-  readonly errorMessages = {
+  readonly feedback = {
     Ok: {
       title: 'Success',
       text: 'User was created successfully!',

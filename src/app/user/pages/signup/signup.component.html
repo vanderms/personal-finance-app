@@ -1,3 +1,4 @@
+@if(userData$ | async; as data){
 <div class="w-full px-4 pt-[7.25rem]">
   <article
     class="bg-background-base px-5 py-6 rounded-xl max-w-[35rem] mx-auto"
@@ -13,11 +14,11 @@
             name="name"
             (input)="setName(name.value)"
             (blur)="blurName()"
-            [value]="user().getUsername()"
-            [attr.aria-describedby]="usernameErrors() | idHashSet : 'name'"
+            [value]="data.user.getUsername()"
+            [attr.aria-describedby]="data.errors.username | idHashSet : 'name'"
           />
         </label>
-        @for (item of usernameErrors(); track item) {
+        @for (item of data.errors.username; track item) {
         <p class="input-field__error-message" [id]="item | IdHash : 'name'">
           {{ item }}
         </p>
@@ -33,11 +34,11 @@
             name="email"
             (input)="setEmail(email.value)"
             (blur)="blurEmail()"
-            [value]="user().getEmail()"
-            [attr.aria-describedby]="emailErrors() | idHashSet : 'email'"
+            [value]="data.user.getEmail()"
+            [attr.aria-describedby]="data.errors.email | idHashSet : 'email'"
           />
         </label>
-        @for (item of emailErrors(); track item) {
+        @for (item of data.errors.email; track item) {
         <p class="input-field__error-message" [id]="item | IdHash : 'email'">
           {{ item }}
         </p>
@@ -51,12 +52,12 @@
             #password
             (input)="setPassword(password.value)"
             (blur)="blurPassword()"
-            [value]="user().getPassword()"
+            [value]="data.user.getPassword()"
             [type]="passwordType()"
             name="password"
             [attr.aria-describedby]="
-              passwordErrors().size > 0
-                ? (passwordErrors() | idHashSet : 'password')
+              data.errors.password.size > 0
+                ? (data.errors.password | idHashSet : 'password')
                 : 'password-hint'
             "
           />
@@ -71,7 +72,7 @@
         >
           <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
         </button>
-        @for (item of passwordErrors(); track item) {
+        @for (item of data.errors.password; track item) {
         <p class="input-field__error-message" [id]="item | IdHash : 'password'">
           {{ item }}
         </p>
@@ -93,3 +94,4 @@
     </p>
   </article>
 </div>
+}

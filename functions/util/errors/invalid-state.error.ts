@@ -1,10 +1,5 @@
 export class InvalidStateError extends Error {
-  static name = 'InvalidStateError';
   constructor(message: string) {
     super(message);
-    this.name = InvalidStateError.name;
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, this.constructor);
-    }
   }
 }

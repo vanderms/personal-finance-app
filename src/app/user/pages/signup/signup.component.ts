@@ -6,13 +6,15 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { IconComponent } from '../../../util/components/icon/icon.component';
 import { RouterModule } from '@angular/router';
-import { SignupClientService } from './signup.service';
+import { AlertService } from '../../../util/components/alert/alert.service';
+import { IconComponent } from '../../../util/components/icon/icon.component';
 import {
   IdHashPipe,
   IdHashSetPipe,
 } from '../../../util/pipes/id-hash-pipe.pipe';
+import { HttpService } from '../../../util/services/http.service';
+import { SignupService } from './signup.service';
 
 @Component({
   selector: 'app-signup',
@@ -24,14 +26,24 @@ import {
     IdHashPipe,
     IdHashSetPipe,
   ],
+  providers: [
+    {
+      provide: SignupService,
+      useFactory: () =>
+        SignupService.getInstance(
+          HttpService.getInstance(),
+          AlertService.getInstance()
+        ),
+    },
+  ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupComponent {
-  private signupService = inject(SignupClientService);
+  private signupService = inject(SignupService);
 
-  user = this.signupService.user;
+  protected userData$ = this.signupService.getState();
 
   protected passwordVisible = signal(false);
 
@@ -61,18 +73,6 @@ export class SignupComponent {
 
   blurEmail() {
     this.signupService.patchTouched({ email: true });
-  }
-
-  get usernameErrors() {
-    return this.signupService.getUsernameErrorMessage();
-  }
-
-  get emailErrors() {
-    return this.signupService.getEmailErrorMessage();
-  }
-
-  get passwordErrors() {
-    return this.signupService.getPasswordErrorMessage();
   }
 
   submitForm(e: Event) {

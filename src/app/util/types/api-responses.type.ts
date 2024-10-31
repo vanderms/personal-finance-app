@@ -10,3 +10,17 @@ export type RestResponse<TData = undefined> = {
   ok: boolean;
   data?: TData;
 };
+
+export const isRestResponse = (value: unknown): value is RestResponse => {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'status' in value &&
+    typeof value.status === 'number' &&
+    'message' in value &&
+    typeof value.message === 'string' &&
+    'ok' in value &&
+    typeof value.ok === 'boolean'
+  );
+};
+
