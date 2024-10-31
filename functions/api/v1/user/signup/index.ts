@@ -38,6 +38,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (
     if (error.name === BadRequestError.name) {
       return createBadRequestErrorResponse(error.name);
     }
+    console.log(`[LOGGING FROM /user/signup]: error: ${error.message}`);
     return createInternalServerErrorResponse();
   }
 };
