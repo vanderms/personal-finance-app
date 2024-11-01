@@ -7,17 +7,19 @@ export const generateSalt = (length = 16) => {
 export const hashPassword = async (password: string, salt: Uint8Array) => {
   const encoder = new TextEncoder();
   const passwordBuffer = encoder.encode(password);
-
-  const saltedPassword = new Uint8Array([...salt, ...passwordBuffer]);
-
-  // worker max execution time does not recommend a slower hash function
+  const saltedPassword = new Uint8Array([...salt, ...passwordBuffer]);  
+  
   const hashBuffer = await crypto.subtle.digest('SHA-256', saltedPassword);
-
-  const decoder = new TextDecoder('utf-8');
-
+  
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+  
+  const saltArray = Array.from(salt);
+  const saltBase64 = btoa(String.fromCharCode(...saltArray));
+  
   return {
-    salt: decoder.decode(salt),
-    password: decoder.decode(new Uint8Array(hashBuffer)),
+      salt: saltBase64,
+      password: hashBase64,
   };
 };
 
@@ -26,16 +28,19 @@ export const verifyPassword = async (
   storedHash: string,
   storedSalt: string
 ) => {
+
+  const saltBytes = Uint8Array.from(atob(storedSalt), c => c.charCodeAt(0));
+  
   const encoder = new TextEncoder();
-  const salt = encoder.encode(storedSalt);
-
   const saltedPassword = new Uint8Array([
-    ...salt,
-    ...encoder.encode(inputPassword),
-  ]);
+      ...saltBytes,
+      ...encoder.encode(inputPassword),
+  ]);  
+
   const hashBuffer = await crypto.subtle.digest('SHA-256', saltedPassword);
-
-  const hash = new TextDecoder('utf-8').decode(new Uint8Array(hashBuffer));
-
-  return hash === storedHash;
+  
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+  
+  return hashBase64 === storedHash;
 };
