@@ -75,10 +75,36 @@ export class UserRepository implements SignupRepository, LoginRepository {
       this.env.PEPPER
     );
   }
-  createLogin(username: string, expiration: number): Promise<LoginEntity> {
-    throw new Error('Method not implemented.');
+  
+  async createLogin(userId: string, expiration: number): Promise<LoginEntity> {
+    const id = crypto.randomUUID();
+
+    await this.env.DB.prepare(
+      ` INSERT INTO login (id, user_id, expiration) VALUES (?, ?, ?)`
+    )
+      .bind(id, userId, expiration)
+      .run();
+
+    return new LoginEntity(id, userId, expiration);
   }
-  getLoginById(id: string): Promise<LoginEntity | null> {
-    throw new Error('Method not implemented.');
+
+  async getLoginById(id: string): Promise<LoginEntity | null> {
+    const stmt = this.env.DB.prepare(
+      'SELECT id, user_id, expiration FROM login l WHERE l.id = ?'
+    ).bind(id);
+
+    const { results: dtos } = await stmt.run<{
+      id: string;
+      user_id: string;
+      expiration: number;
+    }>();
+
+    const dto = dtos[0];
+
+    if (!dto) {
+      return null;
+    }
+
+    return new LoginEntity(dto.id, dto.user_id, dto.expiration);
   }
 }

@@ -1,3 +1,3 @@
 export class LoginEntity {
-  constructor(public id = '', public usernameId = '', public expiration = 0) {}
+  constructor(public id = '', public userId = '', public expiration = 0) {}
 }
