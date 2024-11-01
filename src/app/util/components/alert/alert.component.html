@@ -1,6 +1,37 @@
-<dialog #dialog (close)="onClose()">
+<dialog
+  #dialog
+  (close)="onClose()"
+  class="w-[89.3333%] max-w-[35rem] px-5 py-6 rounded-xl md:p-8"
+>
   @if(alert$ | async; as alert){
-  <h2>{{ alert.title }}</h2>
-  <p>{{ alert.text }}</p>
+
+  <div class="grid grid-cols-[1fr,2rem] gap-2">
+    <h2 class="text-preset-2 text-neutral-900 md:text-preset-1">
+      {{ alert.title }}
+    </h2>
+    <button aria-label="close modal" (click)="dialog.close()">
+      <app-icon iconName="close"></app-icon>
+    </button>
+  </div>
+
+  <p class="text-preset-4 text-neutral-500 mt-5">{{ alert.text }}</p>
+
+  <form method="dialog" class="mt-5">
+    <button
+      [value]="alert.primaryAction"
+      class="button-primary w-full"
+      [ngClass]="[alert.type === 'danger' ? 'bg-red' : 'text-neutral-900']"
+    >
+      {{ alert.primaryAction }}
+    </button>
+    @if (alert.secondaryAction) {
+    <button
+      [value]="alert.secondaryAction"
+      class="text-preset-4 text-neutral-500 hover:text-neutral-900 text-center w-full mt-5"
+    >
+      {{ alert.secondaryAction }}
+    </button>
+    }
+  </form>
   }
 </dialog>

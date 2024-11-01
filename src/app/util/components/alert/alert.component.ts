@@ -4,16 +4,23 @@ import {
   Component,
   ElementRef,
   inject,
-  Query,
   ViewChild,
 } from '@angular/core';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  firstValueFrom,
+  map,
+  tap,
+} from 'rxjs';
 import { AlertService } from './alert.service';
-import { map, tap } from 'rxjs';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-alert',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   providers: [
     { provide: AlertService, useFactory: () => AlertService.getInstance() },
   ],
@@ -24,23 +31,29 @@ import { map, tap } from 'rxjs';
 export class AlertComponent {
   private alertService = inject(AlertService);
 
-  @ViewChild('dialog') dialog?: ElementRef<HTMLDialogElement>;
+  private dialog$ = new BehaviorSubject<HTMLDialogElement | null>(null);
 
-  getDialog() {
-    if (!this.dialog) throw Error('Invalid State: element dialog not found.');
-    return this.dialog.nativeElement;
-  }
-
-  protected alert$ = this.alertService.getAlerts().pipe(
-    map((alert) => alert[0]),
-    tap((alert) => {
-      if (alert) this.getDialog().showModal();
-    })
+  private nonNullDialog$ = this.dialog$.pipe(
+    filter(<T>(dialog: T | null): dialog is T => !!dialog)
   );
 
-  onClose() {
-    console.log('on close component');
-    const action = this.getDialog().returnValue;
-    this.alertService.onClose(action);
+  @ViewChild('dialog') set dialog(value: ElementRef<HTMLDialogElement>) {
+    this.dialog$.next(value.nativeElement);
+  }
+
+  protected alert$ = combineLatest([
+    this.alertService.getAlerts(),
+    this.nonNullDialog$,
+  ]).pipe(
+    filter(([alerts]) => !!alerts[0]),
+
+    tap(([_, dialog]) => dialog.showModal()),
+    map(([alert]) => alert[0])
+  );
+
+  async onClose() {
+    const dialog = await firstValueFrom(this.nonNullDialog$);
+    console.log(dialog.returnValue);
+    this.alertService.onClose(dialog.returnValue);
   }
 }
