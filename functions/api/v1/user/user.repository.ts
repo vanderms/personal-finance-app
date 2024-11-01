@@ -52,30 +52,29 @@ export class UserRepository implements SignupRepository, LoginRepository {
   async checkUsernameAndPassword(
     username: string,
     password: string
-  ): Promise<boolean> {
+  ): Promise<UserEntity | null> {
     const stmt = this.env.DB.prepare(
-      'SELECT password, salt FROM user u WHERE u.username = ?'
+      'SELECT id, username, email, password, salt FROM user u WHERE u.username = ?'
     ).bind(username);
 
-    const { results: users } = await stmt.run<{
-      password: string;
-      salt: string;
-    }>();
+    const { results: users } = await stmt.run<UserDTO & { salt: string }>();
 
     const user = users[0];
 
     if (!user) {
-      return false;
+      return null;
     }
 
-    return await verifyPassword(
+    const isValid = await verifyPassword(
       password,
       user.password,
       user.salt,
       this.env.PEPPER
     );
+
+    return isValid ? new UserEntity(user) : null;
   }
-  
+
   async createLogin(userId: string, expiration: number): Promise<LoginEntity> {
     const id = crypto.randomUUID();
 

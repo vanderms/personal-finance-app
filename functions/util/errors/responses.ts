@@ -1,4 +1,5 @@
 import { RestResponse } from 'types/client';
+import { Properties } from 'util/properties/properties';
 
 const headerJSON = {
   'content-type': 'application/json',
@@ -42,8 +43,11 @@ export class UnauthenticatedResponse extends Response {
       {
         headers: {
           ...headerJSON,
-          'Set-Cookie':
-            'login=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Strict',
+          'Set-Cookie': `
+            ${Properties.COOKIES_LOGIN_KEY}=; 
+            Expires=Thu, 01 Jan 1970 00:00:00 GMT; 
+            Path=/; 
+            SameSite=Strict`,
         },
         status: 401,
       }

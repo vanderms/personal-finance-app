@@ -9,6 +9,7 @@ import {
   UnauthenticatedResponse,
 } from 'util/errors/responses';
 import { BadRequestError } from 'util/errors/bad-request.error';
+import { Properties } from 'util/properties/properties';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
@@ -23,10 +24,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const headers = {
       'content-type': 'application/json',
       'Set-Cookie': `
-        ${LoginService.COOKIES_KEY}=${login.id}; 
+        ${Properties.COOKIES_LOGIN_KEY}=${login.id}; 
         HttpOnly; 
         Secure; 
-        Max-Age=${LoginService.COOKIES_DURATION}; 
+        Max-Age=${Properties.COOKIES_LOGIN_DURATION}; 
         SameSite=Strict`,
     };
 
