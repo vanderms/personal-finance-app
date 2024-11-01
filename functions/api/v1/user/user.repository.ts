@@ -1,9 +1,11 @@
 import { UserDTO } from 'types/client';
 import { UserEntity } from './user.entity';
 import { SignupRepository } from './signup/signup.service';
-import { generateSalt, hashPassword } from 'util/crypto/crypto';
+import { generateSalt, hashPassword, verifyPassword } from 'util/crypto/crypto';
+import { LoginRepository } from './login/login.service';
+import { LoginEntity } from './login.entity';
 
-export class UserRepository implements SignupRepository {
+export class UserRepository implements SignupRepository, LoginRepository {
   private static _instance?: UserRepository;
 
   static getInstance(db: D1Database) {
@@ -46,5 +48,33 @@ export class UserRepository implements SignupRepository {
     const { results } = await stmt.run<UserDTO>();
 
     return results.map((dto) => new UserEntity(dto));
+  }
+
+  async checkUsernameAndPassword(
+    username: string,
+    password: string
+  ): Promise<boolean> {
+    const stmt = this.db
+      .prepare('SELECT password, salt FROM user u WHERE u.username = ?')
+      .bind(username);
+
+    const { results: users } = await stmt.run<{
+      password: string;
+      salt: string;
+    }>();
+
+    const user = users[0];
+
+    if (!user) {
+      return false;
+    }
+
+    return await verifyPassword(password, user.password, user.salt);
+  }
+  createLogin(username: string, expiration: number): Promise<LoginEntity> {
+    throw new Error('Method not implemented.');
+  }
+  getLoginById(id: string): Promise<LoginEntity | null> {
+    throw new Error('Method not implemented.');
   }
 }

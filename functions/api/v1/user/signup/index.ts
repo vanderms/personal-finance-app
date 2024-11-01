@@ -7,10 +7,7 @@ import {
 import { UserEntity } from '../user.entity';
 import { UserRepository } from '../user.repository';
 import { SignupService } from './signup.service';
-
-interface Env {
-  DB: D1Database;
-}
+import { Env } from 'types/env';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {

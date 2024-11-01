@@ -1,6 +1,6 @@
 import { RestResponse } from 'types/client';
 
-const headers = {
+const headerJSON = {
   'content-type': 'application/json',
 } as const;
 
@@ -13,7 +13,7 @@ export const createInternalServerErrorResponse = () => {
     ],
   };
   return new Response(JSON.stringify(response), {
-    headers,
+    headers: headerJSON,
     status: response.status,
   });
 };
@@ -26,7 +26,40 @@ export class BadRequestResponse extends Response {
         ok: false,
         message: error.message.split('|'),
       }),
-      { headers, status: 400 }
+      { headers: headerJSON, status: 400 }
+    );
+  }
+}
+
+export class UnauthenticatedResponse extends Response {
+  constructor(error: Error) {
+    super(
+      JSON.stringify({
+        status: 401,
+        ok: false,
+        message: [],
+      }),
+      {
+        headers: {
+          ...headerJSON,
+          'Set-Cookie':
+            'login=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Strict',
+        },
+        status: 401,
+      }
+    );
+  }
+}
+
+export class UnauthorizedResponse extends Response {
+  constructor(error: Error) {
+    super(
+      JSON.stringify({
+        status: 403,
+        ok: false,
+        message: [],
+      }),
+      { headers: headerJSON, status: 403 }
     );
   }
 }
