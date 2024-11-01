@@ -2,7 +2,7 @@ import { RestResponse } from 'types/client';
 import { Properties } from 'util/properties/properties';
 
 const headerJSON = {
-  'content-type': 'application/json',
+  'Content-type': 'application/json',
 } as const;
 
 export const createInternalServerErrorResponse = () => {
@@ -33,7 +33,7 @@ export class BadRequestResponse extends Response {
 }
 
 export class UnauthenticatedResponse extends Response {
-  constructor(error: Error) {
+  constructor() {
     super(
       JSON.stringify({
         status: 401,
@@ -43,11 +43,12 @@ export class UnauthenticatedResponse extends Response {
       {
         headers: {
           ...headerJSON,
-          'Set-Cookie': `
-            ${Properties.COOKIES_LOGIN_KEY}=; 
-            Expires=Thu, 01 Jan 1970 00:00:00 GMT; 
-            Path=/; 
-            SameSite=Strict`,
+          'Set-Cookie': [
+            `${Properties.COOKIES_LOGIN_KEY}=`,
+            'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+            'Path=/',
+            'SameSite=Strict',
+          ].join('; '),
         },
         status: 401,
       }

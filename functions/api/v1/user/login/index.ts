@@ -22,13 +22,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const login = await loginService.login(dto);
 
     const headers = {
-      'content-type': 'application/json',
-      'Set-Cookie': `
-        ${Properties.COOKIES_LOGIN_KEY}=${login.id}; 
-        HttpOnly; 
-        Secure; 
-        Max-Age=${Properties.COOKIES_LOGIN_DURATION}; 
-        SameSite=Strict`,
+      'Content-Type': 'application/json',
+      'Set-Cookie': [
+        `${Properties.COOKIES_LOGIN_KEY}=${login.id}`,
+        'HttpOnly',
+        'Secure',
+        `Max-Age=${Properties.COOKIES_LOGIN_DURATION_IN_MILLISECONDS / 1000}`,
+        'SameSite=Strict',
+      ].join('; '),
     };
 
     const response: RestResponse = {
@@ -43,7 +44,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
   } catch (error) {
     if (error instanceof UnauthenticatedError) {
-      return new UnauthenticatedResponse(error);
+      return new UnauthenticatedResponse();
     }
     if (error instanceof BadRequestError) {
       return new BadRequestResponse(error);

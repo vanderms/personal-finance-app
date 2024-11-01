@@ -2,22 +2,22 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 import { FailedRequestError } from '../exceptions/failed-request.error';
 import { InvalidResponseError } from '../exceptions/invalid-response.error';
 import { isRestResponse, RestResponse } from '../types/api-responses.type';
+import { HttpService } from './http';
 
-export class HttpService {
+export class HttpServiceImpl implements HttpService {
   static instance?: HttpService;
 
   static getInstance() {
-    if (!this.instance) this.instance = new HttpService();
+    if (!this.instance) this.instance = new HttpServiceImpl();
     return this.instance;
   }
 
-  API = 'https://personal-finance-app-drx.pages.dev/api/v1/';
+  private API = 'https://personal-finance-app-drx.pages.dev/api/v1/';
 
   private loadingCounter = new BehaviorSubject(0);
 
-  loadingStatus: Observable<'loading' | 'idle'> = this.loadingCounter.pipe(
-    map((count) => (count > 0 ? 'loading' : 'idle'))
-  );
+  private loadingStatus: Observable<'loading' | 'idle'> =
+    this.loadingCounter.pipe(map((count) => (count > 0 ? 'loading' : 'idle')));
 
   getLoadingStatus() {
     return this.loadingStatus;

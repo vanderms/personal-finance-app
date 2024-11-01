@@ -13,8 +13,8 @@ import {
   IdHashPipe,
   IdHashSetPipe,
 } from '../../../util/pipes/id-hash-pipe.pipe';
-import { HttpService } from '../../../util/services/http.service';
 import { SignupService } from './signup.service';
+import { HttpServiceImpl } from '../../../util/services/http.service';
 
 @Component({
   selector: 'app-signup',
@@ -31,7 +31,7 @@ import { SignupService } from './signup.service';
       provide: SignupService,
       useFactory: () =>
         SignupService.getInstance(
-          HttpService.getInstance(),
+          HttpServiceImpl.getInstance(),
           AlertService.getInstance()
         ),
     },

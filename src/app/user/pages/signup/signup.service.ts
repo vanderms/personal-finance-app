@@ -1,7 +1,8 @@
 import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
 import { AlertService } from '../../../util/components/alert/alert.service';
-import { HttpService } from '../../../util/services/http.service';
+
 import { User, UserDTO, UserErrors } from '../../user.model';
+import { HttpService } from '../../../util/services/http';
 
 type Touched = {
   [k in keyof Pick<UserDTO, 'username' | 'email' | 'password'>]: boolean;
@@ -87,9 +88,8 @@ export class SignupService {
       return false;
     }
 
-    const user = this.user.value;
-
     try {
+      const user = this.user.value;
       const response = await this.httpService.post('user/signup', user);
 
       if (response.ok) {
@@ -98,27 +98,34 @@ export class SignupService {
       }
 
       if (response.status === 400) {
-        if (response.message.includes(UserErrors.Username.InUse)) {
-          this.inUse.next({
-            ...this.inUse.value,
-            username: [...this.inUse.value.username, user.getUsername()],
-          });
-        }
-
-        if (response.message.includes(UserErrors.Email.InUse)) {
-          this.inUse.next({
-            ...this.inUse.value,
-            email: [...this.inUse.value.username, user.getEmail()],
-          });
-        }
-
+        this.updateInUse(response.message, user.getUsername(), user.getEmail());
         await this.alertService.push(this.feedback.BadRequest);
         return false;
       }
-    } catch (err) {}
 
-    await this.alertService.push(this.feedback.Unknown);
-    return false;
+      throw new Error(response.message.join(' | '));
+      //
+    } catch (err) {
+      console.error(err);
+      await this.alertService.push(this.feedback.Unknown);
+      return false;
+    }
+  }
+
+  private updateInUse(message: string[], username: string, email: string) {
+    if (message.includes(UserErrors.Username.InUse)) {
+      this.inUse.next({
+        ...this.inUse.value,
+        username: [...this.inUse.value.username, username],
+      });
+    }
+
+    if (message.includes(UserErrors.Email.InUse)) {
+      this.inUse.next({
+        ...this.inUse.value,
+        email: [...this.inUse.value.username, email],
+      });
+    }
   }
 
   readonly feedback = {

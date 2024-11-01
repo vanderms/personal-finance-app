@@ -41,7 +41,7 @@ export class LoginService {
       throw new UnauthenticatedError('');
     }
 
-    const expiration = Date.now() + Properties.COOKIES_LOGIN_DURATION;
+    const expiration = Date.now() + Properties.COOKIES_LOGIN_DURATION_IN_MILLISECONDS;
 
     const loginToken = await this.loginRepository.createLogin(
       user.getId(),
