@@ -14,7 +14,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: UserDTO = await context.request.json();
 
-    const repository = UserRepository.getInstance(context.env.DB);
+    const repository = UserRepository.getInstance(context.env);
 
     const loginService = LoginService.getInstance(repository);
 

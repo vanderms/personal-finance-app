@@ -13,7 +13,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: UserDTO = await context.request.json();
 
-    const signupRepository = UserRepository.getInstance(context.env.DB);
+    const signupRepository = UserRepository.getInstance(context.env);
 
     const signupService = SignupService.getInstance(signupRepository);
 
