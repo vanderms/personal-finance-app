@@ -1,7 +1,7 @@
 @if(userData$ | async; as data){
-<div class="w-full px-4 pt-[7.25rem]">
+<div class="h-full w-full grid place-items-center lg:px-5">
   <article
-    class="bg-background-base px-5 py-6 rounded-xl max-w-[35rem] mx-auto"
+    class="bg-background-base px-5 py-6 rounded-xl w-full max-w-[35rem] md:p-8"
   >
     <h1 class="text-preset-1">Sign Up</h1>
     <form class="grid gap-4 mt-8" novalidate (submit)="submitForm($event)">
@@ -12,6 +12,7 @@
             #name
             type="text"
             name="name"
+            size="1"
             (input)="setName(name.value)"
             (blur)="blurName()"
             [value]="data.user.getUsername()"
@@ -31,6 +32,7 @@
           <input
             #email
             type="email"
+            size="1"
             name="email"
             (input)="setEmail(email.value)"
             (blur)="blurEmail()"
@@ -50,6 +52,7 @@
           <span>Create Password</span>
           <input
             #password
+            size="1"
             (input)="setPassword(password.value)"
             (blur)="blurPassword()"
             [value]="data.user.getPassword()"

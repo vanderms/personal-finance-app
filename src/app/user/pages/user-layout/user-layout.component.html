@@ -1,1 +1,31 @@
-<router-outlet></router-outlet>
+<div
+  class="bg-neutral-900 h-[4.375rem] w-full grid place-items-center lg:hidden"
+>
+  <img src="images/logo.svg" alt="" />
+</div>
+<div
+  class="grid p-5 min-h-screen lg:grid-cols-[35rem,1fr] max-w-[95rem] mx-auto items-center"
+>
+  <section
+    class="hidden w-full aspect-[0.6086] bg-cover bg-no-repeat lg:flex lg:flex-col max-h-[calc(100vh-2.5rem)] min-h-fit rounded-xl overflow-hidden"
+    [style.backgroundImage]="'url(images/sidebar.png)'"
+  >
+    <div class="p-10">
+      <img src="images/logo.svg" alt="" />
+    </div>
+
+    <div class="mt-auto flex gap-6 flex-col p-10 bg-neutral-900 opacity-95">
+      <h2 class="text-preset-1 text-white">
+        Keep track of your money and save for your future
+      </h2>
+      <p class="text-preset-4 text-white">
+        Personal finance app puts you in control of your spending. Track
+        transactions, set budgets, and add to savings pots easily.
+      </p>
+    </div>
+  </section>
+
+  <div class="max-h-[min(100vh-2.5rem,57.5rem)] min-h-fit">
+    <router-outlet></router-outlet>
+  </div>
+</div>
