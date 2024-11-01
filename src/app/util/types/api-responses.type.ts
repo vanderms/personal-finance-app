@@ -18,7 +18,6 @@ export const isRestResponse = (value: unknown): value is RestResponse => {
     'status' in value &&
     typeof value.status === 'number' &&
     'message' in value &&
-    typeof value.message === 'string' &&
     'ok' in value &&
     typeof value.ok === 'boolean'
   );

@@ -57,7 +57,7 @@ export class UnauthenticatedResponse extends Response {
 }
 
 export class UnauthorizedResponse extends Response {
-  constructor(error: Error) {
+  constructor() {
     super(
       JSON.stringify({
         status: 403,
