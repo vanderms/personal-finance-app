@@ -3,13 +3,18 @@ import { FailedRequestError } from '../exceptions/failed-request.error';
 import { InvalidResponseError } from '../exceptions/invalid-response.error';
 import { isRestResponse, RestResponse } from '../types/api-responses.type';
 import { HttpService } from './http';
+import { UserService } from '../../domain/user/user.service';
 
-export class HttpServiceImpl implements HttpService {
+export class HttpServiceImpl extends HttpService {
   static instance?: HttpService;
 
-  static getInstance() {
-    if (!this.instance) this.instance = new HttpServiceImpl();
+  static getInstance(userService: UserService) {
+    if (!this.instance) this.instance = new HttpServiceImpl(userService);
     return this.instance;
+  }
+
+  private constructor(private userService: UserService) {
+    super();
   }
 
   private API = 'https://personal-finance-app-drx.pages.dev/api/v1/';
@@ -53,6 +58,10 @@ export class HttpServiceImpl implements HttpService {
       const json = await response.json();
 
       if (isRestResponse(json)) {
+        if (response.status === 401) {
+          this.userService.setUser(null);
+        }
+
         return json as RestResponse<TReturnType>;
       }
 

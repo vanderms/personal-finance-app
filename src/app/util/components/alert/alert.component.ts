@@ -14,16 +14,15 @@ import {
   map,
   tap,
 } from 'rxjs';
-import { AlertService } from './alert.service';
+import { AlertServiceProvider } from '../../adapters/providers.util';
 import { IconComponent } from '../icon/icon.component';
+import { AlertService } from './alert.service';
 
 @Component({
   selector: 'app-alert',
   standalone: true,
   imports: [CommonModule, IconComponent],
-  providers: [
-    { provide: AlertService, useFactory: () => AlertService.getInstance() },
-  ],
+  providers: [AlertServiceProvider],
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

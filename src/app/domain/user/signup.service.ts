@@ -1,12 +1,8 @@
-import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
-import { AlertService } from '../../../util/components/alert/alert.service';
-
-import { User, UserDTO, UserErrors } from '../../user.model';
-import { HttpService } from '../../../util/services/http';
-
-type Touched = {
-  [k in keyof Pick<UserDTO, 'username' | 'email' | 'password'>]: boolean;
-};
+import { BehaviorSubject, combineLatest, map, firstValueFrom } from 'rxjs';
+import { AlertService } from '../../util/components/alert/alert.service';
+import { HttpService } from '../../util/services/http';
+import { UserDTO, User, UserErrors } from './user.model';
+import { StateAcessor } from '../../util/misc/form-field';
 
 export class SignupService {
   static instance?: SignupService;
@@ -28,45 +24,46 @@ export class SignupService {
     this.user.next(this.user.value.patch(partial));
   }
 
-  private touched = new BehaviorSubject<Touched>({
-    username: false,
-    email: false,
-    password: false,
-  });
-
-  patchTouched(partial: Touched) {
-    this.touched.next({ ...this.touched.value, ...partial });
-  }
-
   private inUse = new BehaviorSubject({
     email: [] as string[],
     username: [] as string[],
   });
 
-  private errors = combineLatest([this.user, this.touched, this.inUse]).pipe(
-    map(([user, touched, inUse]) => {
-      const username = touched.username
-        ? user.validateUsername(inUse.username)
-        : new Set<string>();
+  private errors = combineLatest([this.user, this.inUse]).pipe(
+    map(([user, inUse]) => {
+      const username = user.validateUsername(inUse.username);
+      const email = user.validateEmail(inUse.email);
+      const password = user.validatePassword();
+      return { username, email, password };
+    })
+  );
 
-      const email = touched.email
-        ? user.validateEmail(inUse.email)
-        : new Set<string>();
+  private stateAcessors = combineLatest([this.user, this.errors]).pipe(
+    map(([user, errors]) => {
+      const username: StateAcessor<string> = {
+        getValue: () => user.getUsername(),
+        setValue: (username) => this.patchUser({ username }),
+        getErrors: () => errors.username,
+      };
 
-      const password = touched.password
-        ? user.validatePassword()
-        : new Set<string>();
+      const email: StateAcessor<string> = {
+        getValue: () => user.getEmail(),
+        setValue: (email) => this.patchUser({ email }),
+        getErrors: () => errors.email,
+      };
+
+      const password: StateAcessor<string> = {
+        getValue: () => user.getPassword(),
+        setValue: (password) => this.patchUser({ password }),
+        getErrors: () => errors.password,
+      };
 
       return { username, email, password };
     })
   );
 
-  private state = combineLatest([this.user, this.errors]).pipe(
-    map(([user, errors]) => ({ user, errors }))
-  );
-
-  getState() {
-    return this.state;
+  getStateAcessors() {
+    return this.stateAcessors;
   }
 
   private isUserInvalid = combineLatest([this.user, this.inUse]).pipe(
@@ -83,8 +80,6 @@ export class SignupService {
     const isInvalid = await firstValueFrom(this.isUserInvalid);
 
     if (isInvalid) {
-      const [username, email, password] = [true, true, true];
-      this.touched.next({ username, email, password });
       return false;
     }
 

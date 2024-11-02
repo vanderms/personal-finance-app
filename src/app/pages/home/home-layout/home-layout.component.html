@@ -7,7 +7,7 @@
   class="grid p-5 min-h-screen lg:grid-cols-[35rem,1fr] max-w-[90rem] mx-auto items-center"
 >
   <section
-    class="hidden w-full aspect-[0.6086] bg-cover bg-no-repeat lg:flex lg:flex-col max-h-[calc(100vh-2.5rem)] min-h-fit rounded-xl overflow-hidden"
+    class="hidden w-full aspect-[0.6086] bg-cover bg-no-repeat lg:flex lg:flex-col max-h-[calc(100vh-2.5rem)] min-h-[32.75rem] rounded-xl overflow-hidden"
     [style.backgroundImage]="'url(images/sidebar.png)'"
   >
     <div class="p-10">
@@ -26,6 +26,6 @@
   </section>
 
   <div class="max-h-[min(100vh-2.5rem,57.5rem)] min-h-fit">
-    <router-outlet></router-outlet>
+    <ng-content></ng-content>
   </div>
 </div>

@@ -16,6 +16,8 @@ export class AlertService {
     return this.instance;
   }
 
+  private constructor() {}
+
   private state = new BehaviorSubject<
     Array<{ alert: Alert; resolve: (value: string) => void }>
   >([]);

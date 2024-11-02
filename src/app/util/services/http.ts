@@ -1,19 +1,19 @@
 import { Observable } from 'rxjs';
 import { RestResponse } from '../types/api-responses.type';
 
-export interface HttpService {
-  getLoadingStatus(): Observable<'loading' | 'idle'>;
+export abstract class HttpService {
+  abstract getLoadingStatus(): Observable<'loading' | 'idle'>;
 
-  get<TReturnType>(url: string): Promise<RestResponse<TReturnType>>;
+  abstract get<TReturnType>(url: string): Promise<RestResponse<TReturnType>>;
 
-  post<TReturnType>(
+  abstract post<TReturnType>(
     url: string,
     body: unknown
   ): Promise<RestResponse<TReturnType>>;
 
-  delete<TReturnType>(url: string): Promise<RestResponse<TReturnType>>;
+  abstract delete<TReturnType>(url: string): Promise<RestResponse<TReturnType>>;
 
-  put<TReturnType>(
+  abstract put<TReturnType>(
     url: string,
     body: unknown
   ): Promise<RestResponse<TReturnType>>;

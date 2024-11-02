@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { djb2 } from '../functions/djb2';
+import { djb2 } from '../misc/djb2';
 
 @Pipe({
   name: 'idHashSet',

@@ -3,10 +3,10 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-user-layout',
+  selector: 'app-home-layout',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './user-layout.component.html',
-  styleUrl: './user-layout.component.scss',
+  templateUrl: './home-layout.component.html',
+  styleUrl: './home-layout.component.scss',
 })
-export class UserLayoutComponent {}
+export class HomeLayoutComponent {}

@@ -6,13 +6,16 @@ export interface UserDTO {
 }
 
 export class User {
-  protected id: string = '';
-  protected username: string = '';
-  protected email: string = '';
-  protected password: string = '';
+  protected readonly id: string = '';
+  protected readonly username: string = '';
+  protected readonly email: string = '';
+  protected readonly password: string = '';
 
   constructor(builder: UserDTO = {}) {
-    Object.assign(this, builder);
+    if (builder.id) this.id = builder.id;
+    if (builder.username) this.username = builder.username.trim();
+    if (builder.email) this.email = builder.email;
+    if (builder.password) this.password = builder.password;
   }
 
   getId() {
