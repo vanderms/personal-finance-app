@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   Signal,
-  signal
+  signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
@@ -14,12 +14,6 @@ import { SignupInteractor } from '../../../application/usecases/signup.interacto
 import { IconComponent } from '../../components/icon/icon.component';
 import { FormFieldDirective } from '../../directives/form-field.directive';
 import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
-import {
-  HttpGatewayProvider,
-  LoginInteractorProvider,
-  SignupInteractorProvider,
-  UserNotificationGatewayProvider,
-} from '../../providers/providers.util';
 import { HomeLayoutComponent } from './home-layout/home-layout.component';
 
 type InnerSignal<T> = T extends Signal<infer U> ? U : never;
@@ -35,12 +29,6 @@ type InnerSignal<T> = T extends Signal<infer U> ? U : never;
     IdHashPipe,
     IdHashSetPipe,
     FormFieldDirective,
-  ],
-  providers: [
-    HttpGatewayProvider,
-    UserNotificationGatewayProvider,
-    SignupInteractorProvider,
-    LoginInteractorProvider,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -115,13 +103,14 @@ export class HomePageComponent {
 
   async submitForm(e: Event) {
     e.preventDefault();
-    if (this.page() === 'signup') {
-      this.createAccount();
-    }
-  }
 
-  async createAccount() {
-    const success = await this.signupInteractor.signUp();
+    const send = {
+      signup: () => this.signupInteractor.signUp(),
+      login: () => this.loginInteractor.login(),
+    };
+
+    const success = await send[this.page()]();
+
     if (success) {
       this.routerService.navigate(['overview']);
     } else {

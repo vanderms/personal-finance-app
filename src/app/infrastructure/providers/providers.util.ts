@@ -6,17 +6,17 @@ import { HttpGateway } from '../../application/gateways/http.gateway';
 import { UserNotificationGatewayImpl } from '../gateways/user-notification.gateway.impl';
 import { UserNotificationGateway } from '../../application/gateways/user-notification.gateway';
 
-export const HttpGatewayProvider: Provider = {
+const HttpGatewayProvider: Provider = {
   provide: HttpGateway,
   useFactory: () => new HttpGatewayImpl(),
 };
 
-export const UserNotificationGatewayProvider: Provider = {
+const UserNotificationGatewayProvider: Provider = {
   provide: UserNotificationGateway,
   useFactory: () => new UserNotificationGatewayImpl(),
 };
 
-export const SignupInteractorProvider: Provider = {
+const SignupInteractorProvider: Provider = {
   provide: SignupInteractor,
   useFactory: (http: HttpGateway, alert: UserNotificationGatewayImpl) => {
     return new SignupInteractor(http, alert);
@@ -24,10 +24,17 @@ export const SignupInteractorProvider: Provider = {
   deps: [HttpGateway, UserNotificationGateway],
 };
 
-export const LoginInteractorProvider: Provider = {
+const LoginInteractorProvider: Provider = {
   provide: LoginInteractor,
   useFactory: (http: HttpGateway, alert: UserNotificationGatewayImpl) => {
     return new LoginInteractor(http, alert);
   },
   deps: [HttpGateway, UserNotificationGateway],
 };
+
+export const ApplicationProviders = [
+  HttpGatewayProvider,
+  UserNotificationGatewayProvider,
+  SignupInteractorProvider,
+  LoginInteractorProvider,
+];

@@ -14,15 +14,13 @@ import {
   map,
   tap,
 } from 'rxjs';
-import { IconComponent } from '../icon/icon.component';
-import { UserNotificationGatewayProvider } from '../../providers/providers.util';
 import { UserNotificationGateway } from '../../../application/gateways/user-notification.gateway';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-alert',
   standalone: true,
   imports: [CommonModule, IconComponent],
-  providers: [UserNotificationGatewayProvider],
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

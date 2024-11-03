@@ -19,8 +19,8 @@
   <form method="dialog" class="mt-5">
     <button
       [value]="alert.primaryAction"
-      class="button-primary w-full"
-      [ngClass]="[alert.type === 'danger' ? 'bg-red' : 'text-neutral-900']"
+      class="w-full"
+      [ngClass]="[alert.type === 'danger' ? 'button-danger' : 'button-danger']"
     >
       {{ alert.primaryAction }}
     </button>
