@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AlertComponent } from './util/components/alert/alert.component';
-import { AlertService } from './util/components/alert/alert.service';
+import { AlertComponent } from './infrastructure/components/alert/alert.component';
+import { UserNotificationGatewayImpl } from './infrastructure/gateways/user-notification.gateway.impl';
 
 @Component({
   selector: 'app-root',

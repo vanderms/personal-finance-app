@@ -1,2 +1,2 @@
-export { RestResponse } from '../../src/app/util/types/api-responses.type';
-export { User, UserDTO } from '../../src/app/user/user.model';
+export { RestResponse } from '../../src/app/util/dtos/rest-response.dto';
+export { User, UserDTO } from '../../src/app/domain/user.model';
