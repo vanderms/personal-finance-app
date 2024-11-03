@@ -1,11 +1,12 @@
-import { RestResponse, UserDTO } from 'types/client';
+import { LoginService } from 'api/v1/services/login.service';
+import { UserDTO } from 'types/client';
 import { Env } from 'types/env';
 import { BadRequestError } from 'util/errors/bad-request.error';
 import {
   BadRequestResponse,
   InternalServerErrorResponse,
-} from 'util/errors/responses';
-import { UserEntity } from '../../entities/user.entity';
+  LoginResponse,
+} from 'util/responses/responses';
 import { UserRepository } from '../../repositories/user.repository';
 import { SignupService } from '../../services/signup.service';
 
@@ -17,21 +18,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const signupService = new SignupService(userRepository);
 
-    const data = await signupService.signup(dto);
+    const loginService = new LoginService(userRepository);
 
-    const headers = { 'content-type': 'application/json' };
+    const user = await signupService.signup(dto);
 
-    const response: RestResponse<UserEntity> = {
-      status: 201,
-      ok: true,
-      message: [],
-      data,
-    };
+    const login = await loginService.createLogin(user);
 
-    return new Response(JSON.stringify(response), {
-      headers,
-      status: response.status,
-    });
+    return new LoginResponse(login, user);
     //
   } catch (error) {
     if (error instanceof BadRequestError) {

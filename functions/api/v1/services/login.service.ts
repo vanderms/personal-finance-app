@@ -18,7 +18,7 @@ export interface LoginRepository {
 export class LoginService {
   constructor(private loginRepository: LoginRepository) {}
 
-  async login(dto: UserDTO): Promise<LoginEntity> {
+  async login(dto: UserDTO): Promise<{ login: LoginEntity; user: UserEntity }> {
     //
     if (!dto.username || !dto.password) {
       throw new BadRequestError('Username or password is empty.');
@@ -33,7 +33,9 @@ export class LoginService {
       throw new UnauthenticatedError('');
     }
 
-    return await this.createLogin(user);
+    const login = await this.createLogin(user);
+
+    return { login, user };
   }
 
   async createLogin(user: UserEntity) {

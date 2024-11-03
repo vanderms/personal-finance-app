@@ -1,15 +1,15 @@
-import { BehaviorSubject, combineLatest, map, firstValueFrom } from 'rxjs';
-import { UserNotificationGatewayImpl } from '../../infrastructure/gateways/user-notification.gateway.impl';
-import { StateAcessor } from '../../util/dtos/state-acessor.dto';
+import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
-import { HttpGateway } from '../gateways/http.gateway';
 import { Singleton } from '../../util/decorators/singleton.decorator';
+import { StateAcessor } from '../../util/dtos/state-acessor.dto';
+import { HttpGateway } from '../gateways/http.gateway';
+import { UserNotificationGateway } from '../gateways/user-notification.gateway';
 
 @Singleton()
 export class SignupInteractor {
   constructor(
     private httpService: HttpGateway,
-    private alertService: UserNotificationGatewayImpl
+    private notificationService: UserNotificationGateway
   ) {}
 
   private user = new BehaviorSubject(new User());
@@ -82,13 +82,13 @@ export class SignupInteractor {
       const response = await this.httpService.post<User>('user/signup', user);
 
       if (response.ok) {
-        await this.alertService.push(this.feedback.Ok);
+        await this.notificationService.push(this.feedback.Ok);
         return true;
       }
 
       if (response.status === 400) {
         this.updateInUse(response.message, user.getUsername(), user.getEmail());
-        await this.alertService.push(this.feedback.BadRequest);
+        await this.notificationService.push(this.feedback.BadRequest);
         return false;
       }
 
@@ -96,7 +96,7 @@ export class SignupInteractor {
       //
     } catch (err) {
       console.error(err);
-      await this.alertService.push(this.feedback.Unknown);
+      await this.notificationService.push(this.feedback.Unknown);
       return false;
     }
   }
