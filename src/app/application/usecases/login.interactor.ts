@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Subject } from 'rxjs';
 import { UserNotificationGatewayImpl } from '../../infrastructure/gateways/user-notification.gateway.impl';
 import { StateAcessor } from '../../util/dtos/state-acessor.dto';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
@@ -13,6 +13,12 @@ export class LoginInteractor {
   ) {}
 
   private user = new BehaviorSubject(new User());
+
+  private notificationLogin = new Subject<User>();
+
+  getNotificationUserHasLogged() {
+    return this.notificationLogin.asObservable();
+  }
 
   patchUser(partial: UserDTO) {
     this.user.next(this.user.value.patch(partial));
@@ -49,4 +55,56 @@ export class LoginInteractor {
   getStateAcessors() {
     return this.stateAcessors;
   }
+
+  private isUserInvalid() {
+    return (
+      this.user.value.getUsername().length === 0 ||
+      this.user.value.getPassword().length === 0
+    );
+  }
+
+  async login(): Promise<boolean> {
+    const isInvalid = this.isUserInvalid();
+
+    if (isInvalid) {
+      return false;
+    }
+
+    try {
+      const user = this.user.value;
+      const response = await this.httpService.post<User>('user/login', user);
+
+      if (response.ok) {
+        this.notificationLogin.next(response.data as User);
+        return true;
+      }
+
+      if (response.status === 400) {
+        await this.alertService.push(this.feedback.BadRequest);
+        return false;
+      }
+
+      throw new Error(response.message.join(' | '));
+      //
+    } catch (err) {
+      console.error(err);
+      await this.alertService.push(this.feedback.Unknown);
+      return false;
+    }
+  }
+
+  readonly feedback = {
+    BadRequest: {
+      title: 'Error',
+      text: 'The form has errors, please correct them before submitting it again.',
+      type: 'danger',
+      primaryAction: 'Close',
+    },
+    Unknown: {
+      title: 'Error',
+      text: 'An unexpected error occurred. Please try again later.',
+      type: 'danger',
+      primaryAction: 'Close',
+    },
+  } as const;
 }

@@ -10,7 +10,7 @@ import { Singleton } from '../../util/decorators/singleton.decorator';
 
 @Singleton()
 export class HttpGatewayImpl extends HttpGateway {
-  private API = 'https://personal-finance-app-drx.pages.dev/api/v1/';
+  private API = 'https://personal-finance-app-drx.pages.dev/api/v1/controllers/';
 
   private loadingCounter = new BehaviorSubject(0);
 

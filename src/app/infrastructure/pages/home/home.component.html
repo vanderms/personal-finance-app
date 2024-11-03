@@ -26,7 +26,7 @@
           </label>
           <div
             [class.hidden]="
-              !(log(touched.username()) && acessors.username.getErrors().size)
+              !(touched.username() && acessors.username.getErrors().size)
             "
           >
             @for (item of acessors.username.getErrors(); track item) {
@@ -106,7 +106,7 @@
           >
             {{ item }}
           </p>
-          } @if(page() === 'signup' && (!touched.password() ||
+          } @if(getPage()() === 'signup' && (!touched.password() ||
           !acessors.password.getErrors().size)){
           <p class="input-field__hint" id="password-hint">
             Password must be at least 8 characters
@@ -117,11 +117,11 @@
         <button class="button-primary mt-4">{{ buttonText() }}</button>
       </form>
 
-      @if(page() === 'signup'){
+      @if(getPage()() === 'signup'){
       <p class="text-preset-4 text-neutral-500 text-center mt-8">
         Already have an account?
         <button
-          (click)="page.set('login')"
+          (click)="setPage('login')"
           class="text-preset-bold text-neutral-900"
         >
           Login
@@ -131,7 +131,7 @@
       <p class="text-preset-4 text-neutral-500 text-center mt-8">
         Need to create an account?
         <button
-          (click)="page.set('signup')"
+          (click)="setPage('signup')"
           class="text-preset-bold text-neutral-900"
         >
           Sign Up

@@ -1,6 +1,7 @@
 import { UserDTO } from 'types/client';
 import { BadRequestError } from 'util/errors/bad-request.error';
-import { UserEntity } from '../user.entity';
+import { UserEntity } from '../entities/user.entity';
+
 
 export interface SignupRepository {
   getUsersUsingNameOrEmail(name: string, email: string): Promise<UserEntity[]>;

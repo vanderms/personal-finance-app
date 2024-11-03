@@ -79,7 +79,7 @@ export class SignupInteractor {
 
     try {
       const user = this.user.value;
-      const response = await this.httpService.post('user/signup', user);
+      const response = await this.httpService.post<User>('user/signup', user);
 
       if (response.ok) {
         await this.alertService.push(this.feedback.Ok);

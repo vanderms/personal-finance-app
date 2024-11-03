@@ -13,7 +13,7 @@ export class UserNotificationGatewayImpl extends UserNotificationGateway {
     map((alerts) => alerts.map((alert) => alert.alert))
   );
 
-  getAlerts() {
+  override getNotifications() {
     return this.alerts$;
   }
 
@@ -23,7 +23,7 @@ export class UserNotificationGatewayImpl extends UserNotificationGateway {
     });
   }
 
-  resolve(action: string) {
+  override resolve(action: string) {
     const next = this.state.value[0];
 
     if (!next) {
@@ -36,5 +36,3 @@ export class UserNotificationGatewayImpl extends UserNotificationGateway {
     this.state.next(this.state.value.slice(1));
   }
 }
-
-

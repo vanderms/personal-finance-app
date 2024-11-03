@@ -1,10 +1,10 @@
 import { UserDTO } from 'types/client';
-import { UserEntity } from './user.entity';
-import { SignupRepository } from './signup/signup.service';
+import { UserEntity } from '../entities/user.entity';
 import { generateSalt, hashPassword, verifyPassword } from 'util/crypto/crypto';
-import { LoginRepository } from './login/login.service';
-import { LoginEntity } from './login.entity';
+import { LoginRepository } from '../services/login.service';
+import { LoginEntity } from '../entities/login.entity';
 import { Env } from 'types/env';
+import { SignupRepository } from '../services/signup.service';
 
 export class UserRepository implements SignupRepository, LoginRepository {
   private static _instance?: UserRepository;

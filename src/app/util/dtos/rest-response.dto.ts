@@ -1,8 +1,8 @@
-export type RestResponse<TData = undefined> = {
+export type RestResponse<TData = null> = {
   status: number;
   message: string[];
   ok: boolean;
-  data?: TData;
+  data: TData;
 };
 
 export const isRestResponse = (value: unknown): value is RestResponse => {

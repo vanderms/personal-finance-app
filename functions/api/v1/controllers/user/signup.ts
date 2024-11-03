@@ -1,21 +1,21 @@
 import { RestResponse, UserDTO } from 'types/client';
+import { Env } from 'types/env';
 import { BadRequestError } from 'util/errors/bad-request.error';
 import {
   BadRequestResponse,
-  createInternalServerErrorResponse,
+  InternalServerErrorResponse
 } from 'util/errors/responses';
-import { UserEntity } from '../user.entity';
-import { UserRepository } from '../user.repository';
-import { SignupService } from './signup.service';
-import { Env } from 'types/env';
+import { UserEntity } from '../../entities/user.entity';
+import { UserRepository } from '../../repositories/user.repository';
+import { SignupService } from '../../services/signup.service';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: UserDTO = await context.request.json();
 
-    const signupRepository = UserRepository.getInstance(context.env);
+    const userRepository = UserRepository.getInstance(context.env);
 
-    const signupService = SignupService.getInstance(signupRepository);
+    const signupService = SignupService.getInstance(userRepository);
 
     const data = await signupService.signup(dto);
 
@@ -38,6 +38,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return new BadRequestResponse(error);
     }
     console.log(`[LOGGING FROM /user/signup]: error: ${error.message}`);
-    return createInternalServerErrorResponse();
+    return new InternalServerErrorResponse();
   }
 };

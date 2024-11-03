@@ -1,23 +1,22 @@
-import { RestResponse } from 'types/client';
 import { Properties } from 'util/properties/properties';
 
 const headerJSON = {
   'Content-type': 'application/json',
 } as const;
 
-export const createInternalServerErrorResponse = () => {
-  const response: RestResponse = {
-    status: 500,
-    ok: false,
-    message: [
-      'The server has encountered a situation it does not know how to handle.',
-    ],
-  };
-  return new Response(JSON.stringify(response), {
-    headers: headerJSON,
-    status: response.status,
-  });
-};
+export class InternalServerErrorResponse extends Response {
+  constructor() {
+    super(
+      JSON.stringify({
+        status: 500,
+        ok: false,
+        message: [],
+        data: null,
+      }),
+      { headers: headerJSON, status: 400 }
+    );
+  }
+}
 
 export class BadRequestResponse extends Response {
   constructor(error: Error) {
@@ -26,6 +25,7 @@ export class BadRequestResponse extends Response {
         status: 400,
         ok: false,
         message: error.message.split('|'),
+        data: null,
       }),
       { headers: headerJSON, status: 400 }
     );
@@ -39,6 +39,7 @@ export class UnauthenticatedResponse extends Response {
         status: 401,
         ok: false,
         message: [],
+        data: null,
       }),
       {
         headers: {
@@ -63,6 +64,7 @@ export class UnauthorizedResponse extends Response {
         status: 403,
         ok: false,
         message: [],
+        data: null,
       }),
       { headers: headerJSON, status: 403 }
     );

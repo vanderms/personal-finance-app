@@ -41,7 +41,7 @@ export class AlertComponent {
   }
 
   protected alert$ = combineLatest([
-    this.alertService.getAlerts(),
+    this.alertService.getNotifications(),
     this.nonNullDialog$,
   ]).pipe(
     filter(([alerts]) => !!alerts[0]),

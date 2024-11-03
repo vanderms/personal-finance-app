@@ -3,14 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   Signal,
-  signal,
+  signal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterModule } from '@angular/router';
-import { HomeLayoutComponent } from './home-layout/home-layout.component';
+import { Router, RouterModule } from '@angular/router';
 import { LoginInteractor } from '../../../application/usecases/login.interactor';
 import { SignupInteractor } from '../../../application/usecases/signup.interactor';
 import { IconComponent } from '../../components/icon/icon.component';
@@ -18,10 +16,11 @@ import { FormFieldDirective } from '../../directives/form-field.directive';
 import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
 import {
   HttpGatewayProvider,
-  UserNotificationGatewayProvider,
-  SignupInteractorProvider,
   LoginInteractorProvider,
+  SignupInteractorProvider,
+  UserNotificationGatewayProvider,
 } from '../../providers/providers.util';
+import { HomeLayoutComponent } from './home-layout/home-layout.component';
 
 type InnerSignal<T> = T extends Signal<infer U> ? U : never;
 
@@ -52,11 +51,22 @@ export class HomePageComponent {
 
   private loginInteractor = inject(LoginInteractor);
 
+  private routerService = inject(Router);
+
   protected signupAcessors = toSignal(this.signupInteractor.getStateAcessors());
 
   protected loginAcessors = toSignal(this.loginInteractor.getStateAcessors());
 
-  protected page = signal<'login' | 'signup'>('signup');
+  private page = signal<'login' | 'signup'>('signup');
+
+  protected getPage() {
+    return this.page.asReadonly();
+  }
+
+  protected setPage(page: 'login' | 'signup') {
+    this.page.set(page);
+    this.markAllAsUnTouched();
+  }
 
   protected formAcessors = computed(() => {
     if (this.page() === 'signup') return this.signupAcessors();
@@ -91,19 +101,31 @@ export class HomePageComponent {
     password: signal(false),
   };
 
-  constructor() {
-    effect(() => {
-      this.page();
-    });
+  private markAllAsTouched() {
+    this.touched.email.set(true);
+    this.touched.password.set(true);
+    this.touched.username.set(true);
   }
 
-  log<T>(value: T): T {
-    console.log(value);
-    return value;
+  private markAllAsUnTouched() {
+    this.touched.email.set(false);
+    this.touched.password.set(false);
+    this.touched.username.set(false);
   }
 
-  submitForm(e: Event) {
+  async submitForm(e: Event) {
     e.preventDefault();
-    this.signupInteractor.signUp();
+    if (this.page() === 'signup') {
+      this.createAccount();
+    }
+  }
+
+  async createAccount() {
+    const success = await this.signupInteractor.signUp();
+    if (success) {
+      this.routerService.navigate(['overview']);
+    } else {
+      this.markAllAsTouched();
+    }
   }
 }
