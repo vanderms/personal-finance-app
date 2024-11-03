@@ -16,16 +16,25 @@
               size="1"
               [appFormField]="acessors.username"
               (blur)="touched.username.set(true)"
+              [attr.aria-invalid]="
+                touched.username() && acessors.username.getErrors().size
+              "
               [attr.aria-describedby]="
                 acessors.username.getErrors() | idHashSet : 'name'
               "
             />
           </label>
-          @for (item of acessors.username.getErrors(); track item) {
-          <p class="input-field__error-message" [id]="item | IdHash : 'name'">
-            {{ item }}
-          </p>
-          }
+          <div
+            [class.hidden]="
+              !(touched.username() && acessors.username.getErrors().size)
+            "
+          >
+            @for (item of acessors.username.getErrors(); track item) {
+            <p class="input-field__error-message" [id]="item | IdHash : 'name'">
+              {{ item }}
+            </p>
+            }
+          </div>
         </div>
         @if(isSignupAcessor(acessors)){
         <div class="input-field">
@@ -43,11 +52,20 @@
               "
             />
           </label>
-          @for (item of acessors.email.getErrors(); track item) {
-          <p class="input-field__error-message" [id]="item | IdHash : 'email'">
-            {{ item }}
-          </p>
-          }
+          <div
+            [class.hidden]="
+              !(touched.email() && acessors.email.getErrors().size)
+            "
+          >
+            @for (item of acessors.email.getErrors(); track item) {
+            <p
+              class="input-field__error-message"
+              [id]="item | IdHash : 'email'"
+            >
+              {{ item }}
+            </p>
+            }
+          </div>
         </div>
         }
 
@@ -80,12 +98,16 @@
           </button>
           @for (item of acessors.password.getErrors(); track item) {
           <p
+            [class.hidden]="
+              !(touched.password() && acessors.password.getErrors().size)
+            "
             class="input-field__error-message"
             [id]="item | IdHash : 'password'"
           >
             {{ item }}
           </p>
-          } @empty {
+          } @if(page() === 'signup' && (!touched.password() ||
+          !acessors.password.getErrors().size)){
           <p class="input-field__hint" id="password-hint">
             Password must be at least 8 characters
           </p>
