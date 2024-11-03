@@ -3,7 +3,7 @@ import { Env } from 'types/env';
 import { BadRequestError } from 'util/errors/bad-request.error';
 import {
   BadRequestResponse,
-  InternalServerErrorResponse
+  InternalServerErrorResponse,
 } from 'util/errors/responses';
 import { UserEntity } from '../../entities/user.entity';
 import { UserRepository } from '../../repositories/user.repository';
@@ -13,9 +13,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: UserDTO = await context.request.json();
 
-    const userRepository = UserRepository.getInstance(context.env);
+    const userRepository = new UserRepository(context.env);
 
-    const signupService = SignupService.getInstance(userRepository);
+    const signupService = new SignupService(userRepository);
 
     const data = await signupService.signup(dto);
 

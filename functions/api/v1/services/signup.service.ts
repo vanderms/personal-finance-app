@@ -1,4 +1,4 @@
-import { UserDTO } from 'types/client';
+import { Singleton, UserDTO } from 'types/client';
 import { BadRequestError } from 'util/errors/bad-request.error';
 import { UserEntity } from '../entities/user.entity';
 
@@ -9,17 +9,9 @@ export interface SignupRepository {
   saveUser(user: UserEntity): Promise<UserEntity>;
 }
 
+@Singleton()
 export class SignupService {
-  private constructor(private signupRepository: SignupRepository) {}
-
-  private static _instance?: SignupService;
-
-  static getInstance(signupRepository: SignupRepository): SignupService {
-    if (!this._instance) {
-      this._instance = new SignupService(signupRepository);
-    }
-    return this._instance;
-  }
+  constructor(private signupRepository: SignupRepository) {}
 
   public async signup(userBuilder: UserDTO): Promise<UserEntity> {
     const user = new UserEntity(userBuilder);

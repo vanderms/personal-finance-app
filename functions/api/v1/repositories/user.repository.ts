@@ -1,4 +1,4 @@
-import { UserDTO } from 'types/client';
+import { Singleton, UserDTO } from 'types/client';
 import { UserEntity } from '../entities/user.entity';
 import { generateSalt, hashPassword, verifyPassword } from 'util/crypto/crypto';
 import { LoginRepository } from '../services/login.service';
@@ -6,14 +6,9 @@ import { LoginEntity } from '../entities/login.entity';
 import { Env } from 'types/env';
 import { SignupRepository } from '../services/signup.service';
 
+@Singleton()
 export class UserRepository implements SignupRepository, LoginRepository {
-  private static _instance?: UserRepository;
-
-  static getInstance(env: Env) {
-    return this._instance ?? (this._instance = new UserRepository(env));
-  }
-
-  private constructor(private env: Env) {}
+  constructor(private env: Env) {}
 
   async saveUser(user: UserEntity): Promise<UserEntity> {
     const saltArray = generateSalt();
