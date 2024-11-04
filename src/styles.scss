@@ -158,3 +158,50 @@
     @apply h-screen overflow-auto;
   }
 }
+
+@layer components {
+  app-nav {
+    display: contents;
+  }
+
+  app-nav {
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    a {
+      --normal-color: var(--neutral-300);
+
+      &:hover {
+        --normal-color: var(--white);
+      }
+
+      color: var(--normal-color);
+      path {
+        fill: var(--normal-color);
+      }
+    }
+
+    a[aria-current='page'] {
+      pointer-events: none;
+      border-bottom: 4px solid var(--green);
+      border-radius: 8px 8px 0px 0px;
+      background-color: var(--background-100);
+
+      color: var(--neutral-900);
+
+      path {
+        fill: var(--green);
+      }
+    }
+  }
+
+  @screen lg {
+    app-nav a[aria-current='page'] {
+      border-bottom: none;
+      border-left: 4px solid var(--green);
+      border-radius: 0px 12px 12px 0px;
+    }
+  }
+}

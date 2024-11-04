@@ -1,14 +1,19 @@
-<nav class="fixed bottom-0 left-0 right-0 rounded-tl-lg rounded-tr-lg bg-neutral-900">
-  <ul class="mt-2 grid w-full grid-cols-5">
+<nav
+  class="fixed bottom-0 left-0 right-0 rounded-tl-lg rounded-tr-lg bg-neutral-900 pt-2 lg:right-[calc(100vw-18.75rem)] lg:top-0 lg:rounded-br-2xl lg:rounded-tl-none lg:rounded-tr-2xl lg:pr-6"
+>
+  <div class="hidden items-center lg:flex lg:h-[6.375rem] lg:px-8">
+    <img src="/images/logo.svg" alt="" />
+  </div>
+  <ul class="grid w-full grid-cols-5 lg:mr-6 lg:mt-6 lg:grid-cols-1">
     @for (item of links; track $index) {
       <li>
         <a
-          class="grid h-11 place-items-center gap-1 md:h-[4.125rem]"
+          class="flex h-11 flex-col items-center justify-center gap-1 md:h-[4.125rem] lg:flex-row lg:justify-start lg:gap-4 lg:pl-8"
           href=""
           [attr.aria-current]="item.text === active ? 'page' : undefined"
         >
           <app-icon [iconName]="item.icon"></app-icon>
-          <span class="text-preset-5-bold hidden md:block">{{ item.text }}</span>
+          <span class="text-preset-5-bold lg:text-preset-3 hidden md:block">{{ item.text }}</span>
         </a>
       </li>
     }
