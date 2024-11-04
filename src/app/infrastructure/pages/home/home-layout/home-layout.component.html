@@ -1,26 +1,20 @@
-<div
-  class="bg-neutral-900 h-[4.375rem] w-full grid place-items-center lg:hidden"
->
+<div class="grid h-[4.375rem] w-full place-items-center bg-neutral-900 lg:hidden">
   <img src="images/logo.svg" alt="" />
 </div>
-<div
-  class="grid p-5 min-h-screen lg:grid-cols-[35rem,1fr] max-w-[90rem] mx-auto items-center"
->
+<div class="mx-auto grid min-h-screen max-w-[90rem] items-center p-5 lg:grid-cols-[35rem,1fr]">
   <section
-    class="hidden w-full aspect-[0.6086] bg-cover bg-no-repeat lg:flex lg:flex-col max-h-[calc(100vh-2.5rem)] min-h-[32.75rem] rounded-xl overflow-hidden"
+    class="hidden aspect-[0.6086] max-h-[calc(100vh-2.5rem)] min-h-[32.75rem] w-full overflow-hidden rounded-xl bg-cover bg-no-repeat lg:flex lg:flex-col"
     [style.backgroundImage]="'url(images/sidebar.png)'"
   >
     <div class="p-10">
       <img src="images/logo.svg" alt="" />
     </div>
 
-    <div class="mt-auto flex gap-6 flex-col p-10 bg-neutral-900 opacity-95">
-      <h2 class="text-preset-1 text-white">
-        Keep track of your money and save for your future
-      </h2>
+    <div class="mt-auto flex flex-col gap-6 bg-neutral-900 p-10 opacity-95">
+      <h2 class="text-preset-1 text-white">Keep track of your money and save for your future</h2>
       <p class="text-preset-4 text-white">
-        Personal finance app puts you in control of your spending. Track
-        transactions, set budgets, and add to savings pots easily.
+        Personal finance app puts you in control of your spending. Track transactions, set budgets,
+        and add to savings pots easily.
       </p>
     </div>
   </section>

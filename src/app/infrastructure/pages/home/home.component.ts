@@ -76,9 +76,7 @@ export class HomePageComponent implements OnInit {
     return 'Login';
   });
 
-  isSignupAcessor(
-    x: object | undefined
-  ): x is InnerSignal<HomePageComponent['signupAcessors']> {
+  isSignupAcessor(x: object | undefined): x is InnerSignal<HomePageComponent['signupAcessors']> {
     return !!x && 'email' in x;
   }
 

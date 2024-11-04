@@ -31,7 +31,7 @@
     --orange: #be6c49;
     --white: #ffffff;
 
-    --font-sans: "Public Sans", sans-serif;
+    --font-sans: 'Public Sans', sans-serif;
   }
 
   dialog,
@@ -102,7 +102,7 @@
   }
 
   .input-field :where(label) {
-    @apply w-full grid gap-1;
+    @apply grid w-full gap-1;
   }
 
   .input-field :where(label span) {
@@ -110,7 +110,7 @@
   }
 
   .input-field :where(label input) {
-    @apply border border-contrast rounded-xl px-5;
+    @apply rounded-xl border border-contrast px-5;
     height: 2.8125rem;
   }
 
@@ -129,22 +129,32 @@
   }
 
   .input-field__hint {
-    @apply text-neutral-500 text-preset-5 text-right;
+    @apply text-preset-5 text-right text-neutral-500;
   }
 
   .input-field__error-message {
-    @apply text-red text-preset-5-bold text-right;
+    @apply text-preset-5-bold text-right text-red;
   }
 }
 
 @layer components {
   .button-primary {
-    @apply bg-neutral-900 text-white grid place-items-center rounded-lg text-preset-4-bold hover:bg-neutral-500;
+    @apply text-preset-4-bold grid place-items-center rounded-lg bg-neutral-900 text-white hover:bg-neutral-500;
     height: 3.3125rem;
   }
 
   .button-danger {
-    @apply bg-red text-white grid place-items-center rounded-lg text-preset-4-bold hover:opacity-80;
+    @apply text-preset-4-bold grid place-items-center rounded-lg bg-red text-white hover:opacity-80;
     height: 3.3125rem;
+  }
+}
+
+@layer components {
+  body:has(.dashboard-layout) {
+    @apply h-screen overflow-hidden;
+  }
+
+  .dashboard-layout {
+    @apply h-screen overflow-auto;
   }
 }

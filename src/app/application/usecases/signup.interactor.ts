@@ -1,10 +1,4 @@
-import {
-  BehaviorSubject,
-  combineLatest,
-  firstValueFrom,
-  map,
-  Subject,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Subject } from 'rxjs';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 import { StateAcessor } from '../../util/dtos/state-acessor.dto';
@@ -15,7 +9,7 @@ import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
 export class SignupInteractor {
   constructor(
     private httpService: HttpAdapter,
-    private notificationService: UserNotificationAdapter
+    private notificationService: UserNotificationAdapter,
   ) {}
 
   private notificationLogin = new Subject<User>();
@@ -41,7 +35,7 @@ export class SignupInteractor {
       const email = user.validateEmail(inUse.email);
       const password = user.validatePassword();
       return { username, email, password };
-    })
+    }),
   );
 
   private stateAcessors = combineLatest([this.user, this.errors]).pipe(
@@ -65,7 +59,7 @@ export class SignupInteractor {
       };
 
       return { username, email, password };
-    })
+    }),
   );
 
   getStateAcessors() {
@@ -79,7 +73,7 @@ export class SignupInteractor {
         user.validateEmail(inUse.email).size ||
         user.validatePassword().size
       );
-    })
+    }),
   );
 
   async signUp(): Promise<boolean> {

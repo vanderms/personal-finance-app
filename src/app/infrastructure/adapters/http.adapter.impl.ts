@@ -1,10 +1,7 @@
 import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { FailedRequestError } from '../../util/errors/failed-request.error';
 import { InvalidResponseError } from '../../util/errors/invalid-response.error';
-import {
-  isRestResponse,
-  RestResponse,
-} from '../../util/dtos/rest-response.dto';
+import { isRestResponse, RestResponse } from '../../util/dtos/rest-response.dto';
 import { HttpAdapter } from '../../application/adapters/http.adapter';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 
@@ -14,8 +11,9 @@ export class HttpAdapterImpl extends HttpAdapter {
 
   private loadingCounter = new BehaviorSubject(0);
 
-  private loadingStatus: Observable<'loading' | 'idle'> =
-    this.loadingCounter.pipe(map((count) => (count > 0 ? 'loading' : 'idle')));
+  private loadingStatus: Observable<'loading' | 'idle'> = this.loadingCounter.pipe(
+    map((count) => (count > 0 ? 'loading' : 'idle')),
+  );
 
   getLoadingStatus() {
     return this.loadingStatus;
@@ -48,7 +46,7 @@ export class HttpAdapterImpl extends HttpAdapter {
 
   private async request<TReturnType>(
     url: string,
-    options?: RequestInit
+    options?: RequestInit,
   ): Promise<RestResponse<TReturnType>> {
     this.push();
     try {
@@ -64,9 +62,7 @@ export class HttpAdapterImpl extends HttpAdapter {
         return json as RestResponse<TReturnType>;
       }
 
-      throw new InvalidResponseError(
-        'Invalid response type: expecting RestResponse<T>.'
-      );
+      throw new InvalidResponseError('Invalid response type: expecting RestResponse<T>.');
     } catch (error) {
       //
       if (error instanceof InvalidResponseError) {
@@ -84,10 +80,7 @@ export class HttpAdapterImpl extends HttpAdapter {
     return this.request<TReturnType>(url);
   }
 
-  async post<TReturnType>(
-    url: string,
-    body: unknown
-  ): Promise<RestResponse<TReturnType>> {
+  async post<TReturnType>(url: string, body: unknown): Promise<RestResponse<TReturnType>> {
     return this.request<TReturnType>(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -100,10 +93,7 @@ export class HttpAdapterImpl extends HttpAdapter {
     });
   }
 
-  async put<TReturnType>(
-    url: string,
-    body: unknown
-  ): Promise<RestResponse<TReturnType>> {
+  async put<TReturnType>(url: string, body: unknown): Promise<RestResponse<TReturnType>> {
     return this.request<TReturnType>(url, {
       method: 'PUT',
       headers: {

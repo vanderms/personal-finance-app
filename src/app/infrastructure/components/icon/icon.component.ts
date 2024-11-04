@@ -1,11 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
 import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
-
 
 @Component({
   selector: 'app-icon',

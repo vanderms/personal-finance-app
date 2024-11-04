@@ -9,9 +9,7 @@ export class UserNotificationAdapterImpl extends UserNotificationAdapter {
     Array<{ alert: UserNotification; resolve: (value: string) => void }>
   >([]);
 
-  private alerts$ = this.state.pipe(
-    map((alerts) => alerts.map((alert) => alert.alert))
-  );
+  private alerts$ = this.state.pipe(map((alerts) => alerts.map((alert) => alert.alert)));
 
   override getNotifications() {
     return this.alerts$;
@@ -27,8 +25,7 @@ export class UserNotificationAdapterImpl extends UserNotificationAdapter {
     const next = this.state.value[0];
 
     if (!next) {
-      const errorMessage =
-        'Invalid State: there should be at leat one alert on the queue';
+      const errorMessage = 'Invalid State: there should be at leat one alert on the queue';
       return console.error(errorMessage);
     }
 

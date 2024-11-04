@@ -1,144 +1,120 @@
 <app-home-layout>
-  @if(formAcessors(); as acessors){
-  <div class="h-full w-full grid place-items-center lg:px-5">
-    <article
-      class="bg-background-base px-5 py-6 rounded-xl w-full max-w-[35rem] md:p-8"
-    >
-      <h1 class="text-preset-1">{{ titleText() }}</h1>
-      <form class="grid gap-4 mt-8" novalidate (submit)="submitForm($event)">
-        <div class="input-field">
-          <label>
-            <span>Name</span>
-            <input
-              #name
-              type="text"
-              name="name"
-              size="1"
-              [appFormField]="acessors.username"
-              (blur)="touched.username.set(true)"
-              [attr.aria-invalid]="
-                touched.username() && acessors.username.getErrors().size
-              "
-              [attr.aria-describedby]="
-                acessors.username.getErrors() | idHashSet : 'name'
-              "
-            />
-          </label>
-          <div
-            [class.hidden]="
-              !(touched.username() && acessors.username.getErrors().size)
-            "
-          >
-            @for (item of acessors.username.getErrors(); track item) {
-            <p class="input-field__error-message" [id]="item | IdHash : 'name'">
-              {{ item }}
-            </p>
-            }
+  @if (formAcessors(); as acessors) {
+    <div class="grid h-full w-full place-items-center lg:px-5">
+      <article class="w-full max-w-[35rem] rounded-xl bg-background-base px-5 py-6 md:p-8">
+        <h1 class="text-preset-1">{{ titleText() }}</h1>
+        <form class="mt-8 grid gap-4" novalidate (submit)="submitForm($event)">
+          <div class="input-field">
+            <label>
+              <span>Name</span>
+              <input
+                #name
+                type="text"
+                name="name"
+                size="1"
+                [appFormField]="acessors.username"
+                (blur)="touched.username.set(true)"
+                [attr.aria-invalid]="touched.username() && acessors.username.getErrors().size"
+                [attr.aria-describedby]="acessors.username.getErrors() | idHashSet: 'name'"
+              />
+            </label>
+            <div [class.hidden]="!(touched.username() && acessors.username.getErrors().size)">
+              @for (item of acessors.username.getErrors(); track item) {
+                <p class="input-field__error-message" [id]="item | IdHash: 'name'">
+                  {{ item }}
+                </p>
+              }
+            </div>
           </div>
-        </div>
-        @if(isSignupAcessor(acessors)){
-        <div class="input-field">
-          <label>
-            <span>Email</span>
-            <input
-              #email
-              type="email"
-              size="1"
-              name="email"
-              [appFormField]="acessors.email"
-              (blur)="touched.email.set(true)"
-              [attr.aria-describedby]="
-                acessors.email.getErrors() | idHashSet : 'email'
-              "
-            />
-          </label>
-          <div
-            [class.hidden]="
-              !(touched.email() && acessors.email.getErrors().size)
-            "
-          >
-            @for (item of acessors.email.getErrors(); track item) {
-            <p
-              class="input-field__error-message"
-              [id]="item | IdHash : 'email'"
-            >
-              {{ item }}
-            </p>
-            }
-          </div>
-        </div>
-        }
-
-        <div class="input-field">
-          <label>
-            <span>Create Password</span>
-            <input
-              #password
-              size="1"
-              [appFormField]="acessors.password"
-              (blur)="touched.password.set(true)"
-              [type]="passwordType()"
-              name="password"
-              [attr.aria-describedby]="
-                acessors.password.getErrors().size > 0
-                  ? (acessors.password.getErrors() | idHashSet : 'password')
-                  : 'password-hint'
-              "
-            />
-          </label>
-          <button
-            class="input-field__icon h-fit w-fit"
-            type="button"
-            aria-label="show password"
-            [attr.aria-pressed]="passwordVisible()"
-            (mousedown)="passwordVisible.set(true)"
-            (mouseup)="passwordVisible.set(false)"
-          >
-            <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
-          </button>
-          @for (item of acessors.password.getErrors(); track item) {
-          <p
-            [class.hidden]="
-              !(touched.password() && acessors.password.getErrors().size)
-            "
-            class="input-field__error-message"
-            [id]="item | IdHash : 'password'"
-          >
-            {{ item }}
-          </p>
-          } @if(getPage()() === 'signup' && (!touched.password() ||
-          !acessors.password.getErrors().size)){
-          <p class="input-field__hint" id="password-hint">
-            Password must be at least 8 characters
-          </p>
+          @if (isSignupAcessor(acessors)) {
+            <div class="input-field">
+              <label>
+                <span>Email</span>
+                <input
+                  #email
+                  type="email"
+                  size="1"
+                  name="email"
+                  [appFormField]="acessors.email"
+                  (blur)="touched.email.set(true)"
+                  [attr.aria-describedby]="acessors.email.getErrors() | idHashSet: 'email'"
+                />
+              </label>
+              <div [class.hidden]="!(touched.email() && acessors.email.getErrors().size)">
+                @for (item of acessors.email.getErrors(); track item) {
+                  <p class="input-field__error-message" [id]="item | IdHash: 'email'">
+                    {{ item }}
+                  </p>
+                }
+              </div>
+            </div>
           }
-        </div>
 
-        <button class="button-primary mt-4">{{ buttonText() }}</button>
-      </form>
+          <div class="input-field">
+            <label>
+              <span>Create Password</span>
+              <input
+                #password
+                size="1"
+                [appFormField]="acessors.password"
+                (blur)="touched.password.set(true)"
+                [type]="passwordType()"
+                name="password"
+                [attr.aria-describedby]="
+                  acessors.password.getErrors().size > 0
+                    ? (acessors.password.getErrors() | idHashSet: 'password')
+                    : 'password-hint'
+                "
+              />
+            </label>
+            <button
+              class="input-field__icon h-fit w-fit"
+              type="button"
+              aria-label="show password"
+              [attr.aria-pressed]="passwordVisible()"
+              (mousedown)="passwordVisible.set(true)"
+              (mouseup)="passwordVisible.set(false)"
+            >
+              <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
+            </button>
+            @for (item of acessors.password.getErrors(); track item) {
+              <p
+                [class.hidden]="!(touched.password() && acessors.password.getErrors().size)"
+                class="input-field__error-message"
+                [id]="item | IdHash: 'password'"
+              >
+                {{ item }}
+              </p>
+            }
+            @if (
+              getPage()() === 'signup' &&
+              (!touched.password() || !acessors.password.getErrors().size)
+            ) {
+              <p class="input-field__hint" id="password-hint">
+                Password must be at least 8 characters
+              </p>
+            }
+          </div>
 
-      @if(getPage()() === 'signup'){
-      <p class="text-preset-4 text-neutral-500 text-center mt-8">
-        Already have an account?
-        <button
-          (click)="setPage('login')"
-          class="text-preset-bold text-neutral-900"
-        >
-          Login
-        </button>
-      </p>
-      } @else {
-      <p class="text-preset-4 text-neutral-500 text-center mt-8">
-        Need to create an account?
-        <button
-          (click)="setPage('signup')"
-          class="text-preset-bold text-neutral-900"
-        >
-          Sign Up
-        </button>
-      </p>
-      }
-    </article>
-  </div>
+          <button class="button-primary mt-4">{{ buttonText() }}</button>
+        </form>
+
+        @if (getPage()() === 'signup') {
+          <p class="text-preset-4 mt-8 text-center text-neutral-500">
+            Already have an account?
+            <button (click)="setPage('login')" class="text-preset-bold text-neutral-900">
+              Login
+            </button>
+          </p>
+        } @else {
+          <p class="text-preset-4 mt-8 text-center text-neutral-500">
+            Need to create an account?
+            <button (click)="setPage('signup')" class="text-preset-bold text-neutral-900">
+              Sign Up
+            </button>
+          </p>
+        }
+      </article>
+    </div>
   }
 </app-home-layout>

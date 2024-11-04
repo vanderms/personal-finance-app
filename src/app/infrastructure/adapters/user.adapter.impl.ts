@@ -12,26 +12,21 @@ export class UserAdapterImpl extends UserAdapter {
     loginInteractor: LoginInteractor,
     signupInteractor: SignupInteractor,
     httpAdapter: HttpAdapter,
-    private user$ = new BehaviorSubject<User | null | undefined>(undefined)
+    private user$ = new BehaviorSubject<User | null | undefined>(undefined),
   ) {
     super();
 
-    loginInteractor
-      .loginWithCredentials()
-      .then((user) => this.user$.next(user));
+    console.log('Hey');
+    loginInteractor.loginWithCredentials().then((user) => this.user$.next(user));
 
     loginInteractor.getNotificationUserHasLogged().subscribe((user) => {
-      console.log(user);
+      debugger;
       this.user$.next(user);
     });
 
-    signupInteractor
-      .getNotificationUserHasLogged()
-      .subscribe((user) => this.user$.next(user));
+    signupInteractor.getNotificationUserHasLogged().subscribe((user) => this.user$.next(user));
 
-    httpAdapter
-      .getUnauthenticatedResponse()
-      .subscribe(() => this.user$.next(null));
+    httpAdapter.getUnauthenticatedResponse().subscribe(() => this.user$.next(null));
   }
 
   override getCurrentUser(): Observable<User | null> {
@@ -39,7 +34,7 @@ export class UserAdapterImpl extends UserAdapter {
       filter(<T>(x: T | undefined): x is T => {
         return x !== undefined;
       }),
-      tap(console.log)
+      tap(console.log),
     );
   }
 }

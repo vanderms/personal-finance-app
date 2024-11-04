@@ -4,6 +4,4 @@ import { HttpAdapter } from '../adapters/http.adapter';
 @Singleton()
 export class LogoutInteractor {
   constructor(private http: HttpAdapter) {}
-
-
 }

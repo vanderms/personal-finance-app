@@ -49,8 +49,7 @@ export class User {
     if (this.username.length < 4) errors.add(UserErrors.Username.Minlength);
     if (this.username.length > 16) errors.add(UserErrors.Username.Maxlength);
     if (/\s/.test(this.username)) errors.add(UserErrors.Username.EmptySpace);
-    if (usernameInUse.includes(this.username))
-      errors.add(UserErrors.Username.InUse);
+    if (usernameInUse.includes(this.username)) errors.add(UserErrors.Username.InUse);
     return errors;
   }
 
@@ -63,8 +62,7 @@ export class User {
     }
 
     const validPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{8,}$/;
-    if (!validPassword.test(this.password))
-      errors.add(UserErrors.Password.Invalid);
+    if (!validPassword.test(this.password)) errors.add(UserErrors.Password.Invalid);
     return errors;
   }
 
@@ -108,7 +106,6 @@ export const UserErrors = {
   },
   Password: {
     Required: 'Password is required',
-    Invalid:
-      'Password must be at least 8 characters long and contain both letters and numbers',
+    Invalid: 'Password must be at least 8 characters long and contain both letters and numbers',
   },
 };

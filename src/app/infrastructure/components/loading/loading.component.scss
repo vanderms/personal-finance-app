@@ -1,4 +1,3 @@
-
 .lds-roller,
 .lds-roller div,
 .lds-roller div:after {
@@ -15,7 +14,7 @@
   transform-origin: 40px 40px;
 }
 .lds-roller div:after {
-  content: " ";
+  content: ' ';
   display: block;
   position: absolute;
   width: 7.2px;
@@ -88,4 +87,3 @@
     transform: rotate(360deg);
   }
 }
-

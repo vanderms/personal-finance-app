@@ -1,19 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  ViewChild,
-} from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  firstValueFrom,
-  map,
-  tap,
-} from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, tap } from 'rxjs';
 import { UserNotificationAdapter } from '../../../application/adapters/user-notification.adapter';
 import { IconComponent } from '../icon/icon.component';
 
@@ -31,7 +18,7 @@ export class AlertComponent {
   private dialog$ = new BehaviorSubject<HTMLDialogElement | null>(null);
 
   private nonNullDialog$ = this.dialog$.pipe(
-    filter(<T>(dialog: T | null): dialog is T => !!dialog)
+    filter(<T>(dialog: T | null): dialog is T => !!dialog),
   );
 
   @ViewChild('dialog') set dialog(value: ElementRef<HTMLDialogElement>) {
@@ -45,7 +32,7 @@ export class AlertComponent {
     filter(([alerts]) => !!alerts[0]),
 
     tap(([_, dialog]) => dialog.showModal()),
-    map(([alert]) => alert[0])
+    map(([alert]) => alert[0]),
   );
 
   async onClose() {

@@ -3,6 +3,5 @@ export class FailedRequestError extends Error {
   constructor(message: string) {
     super(message);
     this.name = FailedRequestError.name;
-    
   }
 }

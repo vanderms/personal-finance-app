@@ -9,7 +9,7 @@ import { Singleton } from '../../util/decorators/singleton.decorator';
 export class LoginInteractor {
   constructor(
     private httpService: HttpAdapter,
-    private alertService: UserNotificationAdapterImpl
+    private alertService: UserNotificationAdapterImpl,
   ) {}
 
   private user = new BehaviorSubject(new User());
@@ -26,12 +26,10 @@ export class LoginInteractor {
 
   private errors = this.user.pipe(
     map((user) => {
-      const username =
-        user.getUsername().length === 0 ? [UserErrors.Username.Required] : [];
-      const password =
-        user.getPassword().length === 0 ? [UserErrors.Password.Required] : [];
+      const username = user.getUsername().length === 0 ? [UserErrors.Username.Required] : [];
+      const password = user.getPassword().length === 0 ? [UserErrors.Password.Required] : [];
       return { username: new Set(username), password: new Set(password) };
-    })
+    }),
   );
 
   private stateAcessors = combineLatest([this.user, this.errors]).pipe(
@@ -49,7 +47,7 @@ export class LoginInteractor {
       };
 
       return { username, password };
-    })
+    }),
   );
 
   getStateAcessors() {
@@ -57,10 +55,7 @@ export class LoginInteractor {
   }
 
   private isUserInvalid() {
-    return (
-      this.user.value.getUsername().length === 0 ||
-      this.user.value.getPassword().length === 0
-    );
+    return this.user.value.getUsername().length === 0 || this.user.value.getPassword().length === 0;
   }
 
   async loginWithCredentials(): Promise<User | null> {

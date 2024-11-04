@@ -1,0 +1,16 @@
+<nav class="fixed bottom-0 left-0 right-0 rounded-tl-lg rounded-tr-lg bg-neutral-900">
+  <ul class="mt-2 grid w-full grid-cols-5">
+    @for (item of links; track $index) {
+      <li>
+        <a
+          class="grid h-11 place-items-center gap-1 md:h-[4.125rem]"
+          href=""
+          [attr.aria-current]="item.text === active ? 'page' : undefined"
+        >
+          <app-icon [iconName]="item.icon"></app-icon>
+          <span class="text-preset-5-bold hidden md:block">{{ item.text }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

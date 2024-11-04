@@ -10,13 +10,10 @@ import {
 } from '@angular/core';
 import { StateAcessor } from '../../util/dtos/state-acessor.dto';
 
-
 @Component({
   template: ``,
 })
-export abstract class AbstractFieldAdapterComponent<
-  T extends string | boolean
-> {
+export abstract class AbstractFieldAdapterComponent<T extends string | boolean> {
   abstract setValue(value: T): void;
   abstract onChange(fn: (value: T) => void): void;
 }
@@ -25,7 +22,7 @@ class InputTextFieldAdapter extends AbstractFieldAdapterComponent<string> {
   constructor(
     private renderer: Renderer2,
     private elem: HTMLInputElement | HTMLTextAreaElement,
-    private changeFn: ((value: string) => void) | null = null
+    private changeFn: ((value: string) => void) | null = null,
   ) {
     super();
     renderer.listen(elem, 'input', () => {
@@ -46,7 +43,7 @@ class SelectFieldAdapter extends AbstractFieldAdapterComponent<string> {
   constructor(
     private renderer: Renderer2,
     private elem: HTMLSelectElement,
-    private changeFn: ((value: string) => void) | null = null
+    private changeFn: ((value: string) => void) | null = null,
   ) {
     super();
     renderer.listen(elem, 'change', () => {
@@ -67,7 +64,7 @@ class InputRadioFieldAdapter extends AbstractFieldAdapterComponent<string> {
   constructor(
     private renderer: Renderer2,
     private elem: HTMLInputElement,
-    private changeFn: ((value: string) => void) | null = null
+    private changeFn: ((value: string) => void) | null = null,
   ) {
     super();
     renderer.listen(elem, 'change', () => {
@@ -88,7 +85,7 @@ class InputCheckboxFieldAdapter extends AbstractFieldAdapterComponent<boolean> {
   constructor(
     private renderer: Renderer2,
     private elem: HTMLInputElement,
-    private changeFn: ((value: boolean) => void) | null = null
+    private changeFn: ((value: boolean) => void) | null = null,
   ) {
     super();
     renderer.listen(elem, 'change', () => {
@@ -112,10 +109,8 @@ class InputCheckboxFieldAdapter extends AbstractFieldAdapterComponent<boolean> {
 const createFieldAdapter = <T extends string | boolean>(
   renderer: Renderer2,
   el: ElementRef,
-  component: AbstractFieldAdapterComponent<T>
-):
-  | AbstractFieldAdapterComponent<boolean>
-  | AbstractFieldAdapterComponent<string> => {
+  component: AbstractFieldAdapterComponent<T>,
+): AbstractFieldAdapterComponent<boolean> | AbstractFieldAdapterComponent<string> => {
   const element = el.nativeElement;
 
   if (element instanceof HTMLInputElement && element.type === 'checkbox') {
@@ -124,10 +119,7 @@ const createFieldAdapter = <T extends string | boolean>(
   else if (element instanceof HTMLInputElement && element.type === 'radio') {
     return new InputRadioFieldAdapter(renderer, element);
   } //
-  else if (
-    element instanceof HTMLInputElement ||
-    element instanceof HTMLTextAreaElement
-  ) {
+  else if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
     return new InputTextFieldAdapter(renderer, element);
   } //
   else if (element instanceof HTMLSelectElement) {
@@ -148,12 +140,12 @@ export class FormFieldDirective<T extends boolean | string> implements DoCheck {
   constructor(
     renderer: Renderer2,
     el: ElementRef,
-    @Optional() @Host() component: AbstractFieldAdapterComponent<T>
+    @Optional() @Host() component: AbstractFieldAdapterComponent<T>,
   ) {
     this.customFormField = createFieldAdapter(
       renderer,
       el,
-      component
+      component,
     ) as AbstractFieldAdapterComponent<T>;
   }
 

@@ -39,7 +39,7 @@ export const UserAdapterProvider: Provider = {
   useFactory: (
     loginInteractor: LoginInteractor,
     signupInteractor: SignupInteractor,
-    httpAdapter: HttpAdapter
+    httpAdapter: HttpAdapter,
   ) => {
     return new UserAdapterImpl(loginInteractor, signupInteractor, httpAdapter);
   },
