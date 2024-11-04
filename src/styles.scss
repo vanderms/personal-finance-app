@@ -139,7 +139,7 @@
 
 @layer components {
   .button-primary {
-    @apply text-preset-4-bold grid place-items-center rounded-lg bg-neutral-900 text-white hover:bg-neutral-500;
+    @apply text-preset-4-bold grid place-items-center rounded-lg bg-neutral-900 px-4 text-white hover:bg-neutral-500;
     height: 3.3125rem;
   }
 
