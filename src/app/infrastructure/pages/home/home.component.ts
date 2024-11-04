@@ -16,6 +16,8 @@ import { IconComponent } from '../../components/icon/icon.component';
 import { FormFieldDirective } from '../../directives/form-field.directive';
 import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
 import { HomeLayoutComponent } from './home-layout/home-layout.component';
+import { UserAdapter } from '../../../application/adapters/user.adapter';
+import { firstValueFrom } from 'rxjs';
 
 type InnerSignal<T> = T extends Signal<infer U> ? U : never;
 
@@ -39,6 +41,8 @@ export class HomePageComponent implements OnInit {
   private signupInteractor = inject(SignupInteractor);
 
   private loginInteractor = inject(LoginInteractor);
+
+  private userAdapter = inject(UserAdapter);
 
   private routerService = inject(Router);
 
@@ -103,8 +107,8 @@ export class HomePageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const isLogged = await this.loginInteractor.loginWithCredentials();
-    if (isLogged) this.routerService.navigate(['overview']);
+    const user = await firstValueFrom(this.userAdapter.getCurrentUser());
+    if (user) this.routerService.navigate(['overview']);
   }
 
   async submitForm(e: Event) {

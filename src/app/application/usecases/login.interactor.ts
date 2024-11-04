@@ -63,18 +63,17 @@ export class LoginInteractor {
     );
   }
 
-  async loginWithCredentials(): Promise<boolean> {
+  async loginWithCredentials(): Promise<User | null> {
     try {
       const response = await this.httpService.get<User | null>('user/login');
       if (response.ok && response.data) {
-        this.notificationLogin.next(response.data);
-        return true;
+        return response.data;
       }
     } catch (error) {
       console.error(error);
     }
 
-    return false;
+    return null;
   }
 
   async login(): Promise<boolean> {

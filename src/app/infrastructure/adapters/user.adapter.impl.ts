@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, filter, Observable, tap } from 'rxjs';
 import { HttpAdapter } from '../../application/adapters/http.adapter';
 import { UserAdapter } from '../../application/adapters/user.adapter';
 import { LoginInteractor } from '../../application/usecases/login.interactor';
@@ -12,12 +12,18 @@ export class UserAdapterImpl extends UserAdapter {
     loginInteractor: LoginInteractor,
     signupInteractor: SignupInteractor,
     httpAdapter: HttpAdapter,
-    private user$ = new BehaviorSubject<User | null>(null)
+    private user$ = new BehaviorSubject<User | null | undefined>(undefined)
   ) {
     super();
+
     loginInteractor
-      .getNotificationUserHasLogged()
-      .subscribe((user) => this.user$.next(user));
+      .loginWithCredentials()
+      .then((user) => this.user$.next(user));
+
+    loginInteractor.getNotificationUserHasLogged().subscribe((user) => {
+      console.log(user);
+      this.user$.next(user);
+    });
 
     signupInteractor
       .getNotificationUserHasLogged()
@@ -29,6 +35,11 @@ export class UserAdapterImpl extends UserAdapter {
   }
 
   override getCurrentUser(): Observable<User | null> {
-    return this.user$.asObservable();
+    return this.user$.pipe(
+      filter(<T>(x: T | undefined): x is T => {
+        return x !== undefined;
+      }),
+      tap(console.log)
+    );
   }
 }
