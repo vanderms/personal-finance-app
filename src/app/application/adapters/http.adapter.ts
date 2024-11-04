@@ -1,8 +1,10 @@
 import { Observable } from 'rxjs';
 import { RestResponse } from '../../util/dtos/rest-response.dto';
 
-export abstract class HttpGateway {
+export abstract class HttpAdapter {
   abstract getLoadingStatus(): Observable<'loading' | 'idle'>;
+
+  abstract getUnauthenticatedResponse(): Observable<RestResponse>;
 
   abstract get<TReturnType>(url: string): Promise<RestResponse<TReturnType>>;
 

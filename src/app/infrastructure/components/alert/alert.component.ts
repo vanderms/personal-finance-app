@@ -14,7 +14,7 @@ import {
   map,
   tap,
 } from 'rxjs';
-import { UserNotificationGateway } from '../../../application/gateways/user-notification.gateway';
+import { UserNotificationAdapter } from '../../../application/adapters/user-notification.adapter';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -26,7 +26,7 @@ import { IconComponent } from '../icon/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertComponent {
-  private alertService = inject(UserNotificationGateway);
+  private alertService = inject(UserNotificationAdapter);
 
   private dialog$ = new BehaviorSubject<HTMLDialogElement | null>(null);
 

@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   inject,
+  OnInit,
   Signal,
   signal,
 } from '@angular/core';
@@ -34,7 +35,7 @@ type InnerSignal<T> = T extends Signal<infer U> ? U : never;
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnInit {
   private signupInteractor = inject(SignupInteractor);
 
   private loginInteractor = inject(LoginInteractor);
@@ -99,6 +100,11 @@ export class HomePageComponent {
     this.touched.email.set(false);
     this.touched.password.set(false);
     this.touched.username.set(false);
+  }
+
+  async ngOnInit() {
+    const isLogged = await this.loginInteractor.loginWithCredentials();
+    if (isLogged) this.routerService.navigate(['overview']);
   }
 
   async submitForm(e: Event) {

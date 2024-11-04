@@ -1,15 +1,15 @@
 import { BehaviorSubject, combineLatest, map, Subject } from 'rxjs';
-import { UserNotificationGatewayImpl } from '../../infrastructure/gateways/user-notification.gateway.impl';
+import { UserNotificationAdapterImpl } from '../../infrastructure/adapters/user-notification.adapter.impl';
 import { StateAcessor } from '../../util/dtos/state-acessor.dto';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
-import { HttpGateway } from '../gateways/http.gateway';
+import { HttpAdapter } from '../adapters/http.adapter';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 
 @Singleton()
 export class LoginInteractor {
   constructor(
-    private httpService: HttpGateway,
-    private alertService: UserNotificationGatewayImpl
+    private httpService: HttpAdapter,
+    private alertService: UserNotificationAdapterImpl
   ) {}
 
   private user = new BehaviorSubject(new User());
@@ -63,6 +63,20 @@ export class LoginInteractor {
     );
   }
 
+  async loginWithCredentials(): Promise<boolean> {
+    try {
+      const response = await this.httpService.get<User | null>('user/login');
+      if (response.ok && response.data) {
+        this.notificationLogin.next(response.data);
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  }
+
   async login(): Promise<boolean> {
     const isInvalid = this.isUserInvalid();
 
@@ -75,7 +89,7 @@ export class LoginInteractor {
       const response = await this.httpService.post<User>('user/login', user);
 
       if (response.ok) {
-        this.notificationLogin.next(response.data as User);
+        this.notificationLogin.next(response.data);
         return true;
       }
 

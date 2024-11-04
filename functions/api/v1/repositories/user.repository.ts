@@ -82,15 +82,22 @@ export class UserRepository implements SignupRepository, LoginRepository {
     return new LoginEntity(id, userId, expiration);
   }
 
-  async getLoginById(id: string): Promise<LoginEntity | null> {
+  async getLoginAndUserByLoginId(
+    id: string
+  ): Promise<{ login: LoginEntity; user: UserEntity } | null> {
     const stmt = this.env.DB.prepare(
-      'SELECT id, user_id, expiration FROM login l WHERE l.id = ?'
-    ).bind(id);
+      `SELECT l.id, l.user_id, l.expiration, u.email, u.username 
+        FROM login l 
+        JOIN user u ON u.id = l.user_id        
+        WHERE l.id = ? AND l.expiration > ?`
+    ).bind(id, Date.now());
 
     const { results: dtos } = await stmt.run<{
       id: string;
       user_id: string;
       expiration: number;
+      email: string;
+      username: string;
     }>();
 
     const dto = dtos[0];
@@ -98,7 +105,14 @@ export class UserRepository implements SignupRepository, LoginRepository {
     if (!dto) {
       return null;
     }
+    const login = new LoginEntity(dto.id, dto.user_id, dto.expiration);
 
-    return new LoginEntity(dto.id, dto.user_id, dto.expiration);
+    const user = new UserEntity({
+      username: dto.username,
+      email: dto.email,
+      id: dto.user_id,
+    });
+
+    return { login, user };
   }
 }

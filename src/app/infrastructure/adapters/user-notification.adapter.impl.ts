@@ -1,10 +1,10 @@
 import { BehaviorSubject, map } from 'rxjs';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 import { UserNotification } from '../../util/dtos/use-notification.dto';
-import { UserNotificationGateway } from '../../application/gateways/user-notification.gateway';
+import { UserNotificationAdapter } from '../../application/adapters/user-notification.adapter';
 
 @Singleton()
-export class UserNotificationGatewayImpl extends UserNotificationGateway {
+export class UserNotificationAdapterImpl extends UserNotificationAdapter {
   private state = new BehaviorSubject<
     Array<{ alert: UserNotification; resolve: (value: string) => void }>
   >([]);

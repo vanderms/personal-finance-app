@@ -1,16 +1,28 @@
-import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  firstValueFrom,
+  map,
+  Subject,
+} from 'rxjs';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 import { StateAcessor } from '../../util/dtos/state-acessor.dto';
-import { HttpGateway } from '../gateways/http.gateway';
-import { UserNotificationGateway } from '../gateways/user-notification.gateway';
+import { HttpAdapter } from '../adapters/http.adapter';
+import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
 
 @Singleton()
 export class SignupInteractor {
   constructor(
-    private httpService: HttpGateway,
-    private notificationService: UserNotificationGateway
+    private httpService: HttpAdapter,
+    private notificationService: UserNotificationAdapter
   ) {}
+
+  private notificationLogin = new Subject<User>();
+
+  getNotificationUserHasLogged() {
+    return this.notificationLogin.asObservable();
+  }
 
   private user = new BehaviorSubject(new User());
 

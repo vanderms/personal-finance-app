@@ -11,7 +11,9 @@ export interface LoginRepository {
     password: string
   ): Promise<UserEntity | null>;
   createLogin(username: string, expiration: number): Promise<LoginEntity>;
-  getLoginById(id: string): Promise<LoginEntity | null>;
+  getLoginAndUserByLoginId(
+    id: string
+  ): Promise<{ login: LoginEntity; user: UserEntity } | null>;
 }
 
 @Singleton()
@@ -38,6 +40,16 @@ export class LoginService {
     return { login, user };
   }
 
+  async loginWithCredentials(loginId: string) {
+    const query = await this.loginRepository.getLoginAndUserByLoginId(loginId);
+
+    if (!query) {
+      throw new UnauthenticatedError('');
+    }
+
+    return query;
+  }
+
   async createLogin(user: UserEntity) {
     const expiration =
       Date.now() + Properties.COOKIES_LOGIN_DURATION_IN_MILLISECONDS;
@@ -51,9 +63,9 @@ export class LoginService {
   }
 
   async isLogged(loginId: string, userId: string): Promise<boolean> {
-    const login = await this.loginRepository.getLoginById(loginId);
+    const query = await this.loginRepository.getLoginAndUserByLoginId(loginId);
 
-    if (login.userId === userId) {
+    if (query && query.login.userId === userId) {
       return true;
     }
 

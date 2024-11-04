@@ -5,11 +5,11 @@ import {
   isRestResponse,
   RestResponse,
 } from '../../util/dtos/rest-response.dto';
-import { HttpGateway } from '../../application/gateways/http.gateway';
+import { HttpAdapter } from '../../application/adapters/http.adapter';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 
 @Singleton()
-export class HttpGatewayImpl extends HttpGateway {
+export class HttpAdapterImpl extends HttpAdapter {
   private API = 'https://personal-finance-app-drx.pages.dev/api/v1/controllers/';
 
   private loadingCounter = new BehaviorSubject(0);
@@ -31,7 +31,7 @@ export class HttpGatewayImpl extends HttpGateway {
 
   private unauthenticatedResponse = new Subject<RestResponse>();
 
-  getUnauthenticatedResponse() {
+  override getUnauthenticatedResponse(): Observable<RestResponse> {
     return this.unauthenticatedResponse.asObservable();
   }
 
