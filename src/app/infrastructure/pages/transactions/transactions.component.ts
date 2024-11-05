@@ -10,4 +10,8 @@ import { NavComponent } from '../../components/nav/nav.component';
   styleUrl: './transactions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionsComponent {}
+export class TransactionsComponent {
+  onChange(value: string) {
+    console.log(value);
+  }
+}

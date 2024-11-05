@@ -1,7 +1,6 @@
 import { BehaviorSubject, combineLatest, firstValueFrom, map, Subject } from 'rxjs';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
 import { Singleton } from '../../util/decorators/singleton.decorator';
-import { StateAcessor } from '../../util/dtos/state-acessor.dto';
 import { HttpAdapter } from '../adapters/http.adapter';
 import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
 
@@ -20,58 +19,34 @@ export class SignupInteractor {
 
   private user = new BehaviorSubject(new User());
 
-  patchUser(partial: UserDTO) {
-    this.user.next(this.user.value.patch(partial));
-  }
-
   private inUse = new BehaviorSubject({
     email: [] as string[],
     username: [] as string[],
   });
 
-  private errors = combineLatest([this.user, this.inUse]).pipe(
-    map(([user, inUse]) => {
-      const username = user.validateUsername(inUse.username);
-      const email = user.validateEmail(inUse.email);
-      const password = user.validatePassword();
-      return { username, email, password };
-    }),
-  );
+  getUser() {
+    return combineLatest([this.user, this.inUse]).pipe(
+      map(([user, inUse]) => {
+        const emailValidator = user.emailErrors.bind(user);
+        user.emailErrors = () => emailValidator(inUse.email);
 
-  private stateAcessors = combineLatest([this.user, this.errors]).pipe(
-    map(([user, errors]) => {
-      const username: StateAcessor<string> = {
-        getValue: () => user.getUsername(),
-        setValue: (username) => this.patchUser({ username }),
-        getErrors: () => errors.username,
-      };
+        const usernameValidator = user.usernameErrors.bind(user);
+        user.usernameErrors = () => usernameValidator(inUse.username);
+        return user;
+      }),
+    );
+  }
 
-      const email: StateAcessor<string> = {
-        getValue: () => user.getEmail(),
-        setValue: (email) => this.patchUser({ email }),
-        getErrors: () => errors.email,
-      };
-
-      const password: StateAcessor<string> = {
-        getValue: () => user.getPassword(),
-        setValue: (password) => this.patchUser({ password }),
-        getErrors: () => errors.password,
-      };
-
-      return { username, email, password };
-    }),
-  );
-
-  getStateAcessors() {
-    return this.stateAcessors;
+  patchUser(partial: UserDTO) {
+    this.user.next(this.user.value.patch(partial));
   }
 
   private isUserInvalid = combineLatest([this.user, this.inUse]).pipe(
     map(([user, inUse]) => {
       return (
-        user.validateUsername(inUse.username).size ||
-        user.validateEmail(inUse.email).size ||
-        user.validatePassword().size
+        user.usernameErrors(inUse.username).size ||
+        user.emailErrors(inUse.email).size ||
+        user.passwordErrors().size
       );
     }),
   );

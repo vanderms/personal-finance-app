@@ -13,9 +13,9 @@ export class User {
 
   constructor(builder: UserDTO = {}) {
     if (builder.id) this.id = builder.id;
-    if (builder.username) this.username = builder.username.trim();
-    if (builder.email) this.email = builder.email;
-    if (builder.password) this.password = builder.password;
+    if (builder.username) this.username = builder.username.replaceAll(' ', '');
+    if (builder.email) this.email = builder.email.replaceAll(' ', '');
+    if (builder.password) this.password = builder.password.replaceAll(' ', '');
   }
 
   getId() {
@@ -38,7 +38,7 @@ export class User {
     return new User({ ...this, ...values });
   }
 
-  validateUsername(usernameInUse: string[] = []) {
+  usernameErrors(usernameInUse: string[] = []) {
     const errors: Set<string> = new Set();
 
     if (!this.username.trim()) {
@@ -53,7 +53,7 @@ export class User {
     return errors;
   }
 
-  validatePassword() {
+  passwordErrors() {
     const errors: Set<string> = new Set();
 
     if (!this.password.trim()) {
@@ -66,7 +66,7 @@ export class User {
     return errors;
   }
 
-  validateEmail(emailInUse: string[] = []) {
+  emailErrors(emailInUse: string[] = []) {
     const errors: Set<string> = new Set();
 
     if (!this.email.trim()) {

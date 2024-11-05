@@ -1,9 +1,8 @@
-import { BehaviorSubject, combineLatest, map, Subject } from 'rxjs';
-import { UserNotificationAdapterImpl } from '../../infrastructure/adapters/user-notification.adapter.impl';
-import { StateAcessor } from '../../util/dtos/state-acessor.dto';
+import { BehaviorSubject, map, Subject } from 'rxjs';
 import { User, UserDTO, UserErrors } from '../../domain/user.model';
-import { HttpAdapter } from '../adapters/http.adapter';
+import { UserNotificationAdapterImpl } from '../../infrastructure/adapters/user-notification.adapter.impl';
 import { Singleton } from '../../util/decorators/singleton.decorator';
+import { HttpAdapter } from '../adapters/http.adapter';
 
 @Singleton()
 export class LoginInteractor {
@@ -14,6 +13,24 @@ export class LoginInteractor {
 
   private user = new BehaviorSubject(new User());
 
+  getUser() {
+    return this.user.asObservable().pipe(
+      map((user) => {
+        user.usernameErrors = () => {
+          if (user.getUsername().length === 0) return new Set(UserErrors.Username.Required);
+          return new Set<string>();
+        };
+
+        user.passwordErrors = () => {
+          if (user.getPassword().length === 0) return new Set(UserErrors.Password.Required);
+          return new Set<string>();
+        };
+
+        return user;
+      }),
+    );
+  }
+
   private notificationLogin = new Subject<User>();
 
   getNotificationUserHasLogged() {
@@ -22,36 +39,6 @@ export class LoginInteractor {
 
   patchUser(partial: UserDTO) {
     this.user.next(this.user.value.patch(partial));
-  }
-
-  private errors = this.user.pipe(
-    map((user) => {
-      const username = user.getUsername().length === 0 ? [UserErrors.Username.Required] : [];
-      const password = user.getPassword().length === 0 ? [UserErrors.Password.Required] : [];
-      return { username: new Set(username), password: new Set(password) };
-    }),
-  );
-
-  private stateAcessors = combineLatest([this.user, this.errors]).pipe(
-    map(([user, errors]) => {
-      const username: StateAcessor<string> = {
-        getValue: () => user.getUsername(),
-        setValue: (username) => this.patchUser({ username }),
-        getErrors: () => errors.username,
-      };
-
-      const password: StateAcessor<string> = {
-        getValue: () => user.getPassword(),
-        setValue: (password) => this.patchUser({ password }),
-        getErrors: () => errors.password,
-      };
-
-      return { username, password };
-    }),
-  );
-
-  getStateAcessors() {
-    return this.stateAcessors;
   }
 
   private isUserInvalid() {

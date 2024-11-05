@@ -27,11 +27,10 @@ export class SignupService {
   }
 
   private async validateUser(user: UserEntity): Promise<string[]> {
-    const usersUsingNameOrEmail =
-      await this.signupRepository.getUsersUsingNameOrEmail(
-        user.getUsername(),
-        user.getEmail()
-      );
+    const usersUsingNameOrEmail = await this.signupRepository.getUsersUsingNameOrEmail(
+      user.getUsername(),
+      user.getEmail(),
+    );
 
     const nameInUse = usersUsingNameOrEmail
       .filter((other) => other.getUsername() === user.getUsername())
@@ -41,9 +40,9 @@ export class SignupService {
       .filter((other) => other.getEmail() === user.getEmail())
       .map(() => user.getEmail());
 
-    const emailErrors = user.validateEmail(emailInUse);
-    const nameErrors = user.validateUsername(nameInUse);
-    const passwordErrors = user.validatePassword();
+    const emailErrors = user.emailErrors(emailInUse);
+    const nameErrors = user.usernameErrors(nameInUse);
+    const passwordErrors = user.passwordErrors();
 
     return [...emailErrors, ...nameErrors, ...passwordErrors];
   }

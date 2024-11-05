@@ -10,14 +10,15 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { UserAdapter } from '../../../application/adapters/user.adapter';
 import { LoginInteractor } from '../../../application/usecases/login.interactor';
 import { SignupInteractor } from '../../../application/usecases/signup.interactor';
 import { IconComponent } from '../../components/icon/icon.component';
-import { FormFieldDirective } from '../../directives/form-field.directive';
 import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
 import { HomeLayoutComponent } from './home-layout/home-layout.component';
-import { UserAdapter } from '../../../application/adapters/user.adapter';
-import { firstValueFrom } from 'rxjs';
+import { ForceValueSyncDirective } from '../../directives/force-sync.directive';
+import { UserDTO } from '../../../domain/user.model';
 
 type InnerSignal<T> = T extends Signal<infer U> ? U : never;
 
@@ -31,7 +32,7 @@ type InnerSignal<T> = T extends Signal<infer U> ? U : never;
     RouterModule,
     IdHashPipe,
     IdHashSetPipe,
-    FormFieldDirective,
+    ForceValueSyncDirective,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -46,11 +47,11 @@ export class HomePageComponent implements OnInit {
 
   private routerService = inject(Router);
 
-  protected signupAcessors = toSignal(this.signupInteractor.getStateAcessors());
+  protected signupUser = toSignal(this.signupInteractor.getUser());
 
-  protected loginAcessors = toSignal(this.loginInteractor.getStateAcessors());
+  protected loginUser = toSignal(this.loginInteractor.getUser());
 
-  private page = signal<'login' | 'signup'>('signup');
+  protected page = signal<'login' | 'signup'>('signup');
 
   protected getPage() {
     return this.page.asReadonly();
@@ -61,10 +62,17 @@ export class HomePageComponent implements OnInit {
     this.markAllAsUnTouched();
   }
 
-  protected formAcessors = computed(() => {
-    if (this.page() === 'signup') return this.signupAcessors();
-    return this.loginAcessors();
+  protected user = computed(() => {
+    if (this.page() === 'signup') return this.signupUser();
+    return this.loginUser();
   });
+
+  protected patchUser(user: UserDTO) {
+    if (this.page() === 'signup') {
+      return this.signupInteractor.patchUser(user);
+    }
+    return this.loginInteractor.patchUser(user);
+  }
 
   protected titleText = computed(() => {
     if (this.page() === 'signup') return 'Get Started';
@@ -75,10 +83,6 @@ export class HomePageComponent implements OnInit {
     if (this.page() === 'signup') return 'Create Account';
     return 'Login';
   });
-
-  isSignupAcessor(x: object | undefined): x is InnerSignal<HomePageComponent['signupAcessors']> {
-    return !!x && 'email' in x;
-  }
 
   protected passwordVisible = signal(false);
 
