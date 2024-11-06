@@ -3,7 +3,12 @@ import { TransactionRepository } from 'api/v1/repositories/transaction.repositor
 import { AddTransactionService } from 'api/v1/services/add-transaction.service';
 import { TransactionDTO } from 'types/client';
 import { Env } from 'types/env';
-import { InternalServerErrorResponse, OperationSuccessResponse } from 'util/responses/responses';
+import { BadRequestError } from 'util/errors/bad-request.error';
+import {
+  BadRequestResponse,
+  InternalServerErrorResponse,
+  OperationSuccessResponse,
+} from 'util/responses/responses';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
@@ -21,6 +26,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   } catch (error) {
     if (AuthHelper.isAuthError(error)) {
       return AuthHelper.createErrorResponse(error);
+    }
+
+    if (error instanceof BadRequestError) {
+      return new BadRequestResponse(error);
     }
 
     return new InternalServerErrorResponse();

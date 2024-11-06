@@ -4,7 +4,7 @@ import { AuthGuard } from './infrastructure/guards/auth.guard';
 export const routes: Routes = [
   {
     title: 'Home',
-    path: 'home',
+    path: '',
     loadComponent: () =>
       import('./infrastructure/pages/home/home.component').then((m) => m.HomePageComponent),
   },
@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     title: 'Transactions',
-    path: '',
+    path: 'transactions',
     canActivate: [],
     loadComponent: () =>
       import('./infrastructure/pages/transactions/transactions.component').then(
