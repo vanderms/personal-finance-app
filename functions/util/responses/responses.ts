@@ -3,8 +3,11 @@ import { UserEntity } from 'api/v1/entities/user.entity';
 import { RestResponse } from 'types/client';
 import { Properties } from 'util/properties/properties';
 
-const headerJSON = {
+const CommomHeader = {
   'Content-type': 'application/json',
+  'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 } as const;
 
 export class LoginResponse extends Response {
@@ -17,7 +20,7 @@ export class LoginResponse extends Response {
 
   static mountHeaders(login: { id: string }) {
     return {
-      'Content-Type': 'application/json',
+      ...CommomHeader,
       'Set-Cookie': [
         `${Properties.COOKIES_LOGIN_KEY}=${login.id}`,
         'HttpOnly',
@@ -48,7 +51,7 @@ export class InternalServerErrorResponse extends Response {
         message: [],
         data: null,
       }),
-      { headers: headerJSON, status: 400 }
+      { headers: CommomHeader, status: 400 },
     );
   }
 }
@@ -62,7 +65,7 @@ export class BadRequestResponse extends Response {
         message: error.message.split('|'),
         data: null,
       }),
-      { headers: headerJSON, status: 400 }
+      { headers: CommomHeader, status: 400 },
     );
   }
 }
@@ -78,7 +81,7 @@ export class UnauthenticatedResponse extends Response {
       }),
       {
         headers: {
-          ...headerJSON,
+          ...CommomHeader,
           'Set-Cookie': [
             `${Properties.COOKIES_LOGIN_KEY}=`,
             'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
@@ -87,7 +90,7 @@ export class UnauthenticatedResponse extends Response {
           ].join('; '),
         },
         status: 401,
-      }
+      },
     );
   }
 }
@@ -101,7 +104,35 @@ export class UnauthorizedResponse extends Response {
         message: [],
         data: null,
       }),
-      { headers: headerJSON, status: 403 }
+      { headers: CommomHeader, status: 403 },
+    );
+  }
+}
+
+export class OperationSuccessResponse extends Response {
+  constructor() {
+    super(
+      JSON.stringify({
+        status: 200,
+        ok: true,
+        message: [],
+        data: null,
+      }),
+      { headers: CommomHeader, status: 200 },
+    );
+  }
+}
+
+export class ResourceResponse<T> extends Response {
+  constructor(data: T) {
+    super(
+      JSON.stringify({
+        status: 200,
+        ok: true,
+        message: [],
+        data,
+      }),
+      { headers: CommomHeader, status: 201 },
     );
   }
 }

@@ -6,6 +6,7 @@ import {
   BadRequestResponse,
   InternalServerErrorResponse,
   LoginResponse,
+  ResourceResponse,
   UnauthenticatedResponse,
 } from 'util/responses/responses';
 import { UserRepository } from '../../repositories/user.repository';
@@ -48,20 +49,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const loginCookie = cookies.get('login');
 
     if (!loginCookie) {
-      const headers = {
-        'Content-type': 'application/json',
-      } as const;
-
-      const response: RestResponse<null> = {
-        status: 200,
-        ok: true,
-        message: [],
-        data: null,
-      };
-      return new Response(JSON.stringify(response), {
-        headers,
-        status: response.status,
-      });
+      return new ResourceResponse(null);
     }
 
     const loginService = new LoginService(repository);

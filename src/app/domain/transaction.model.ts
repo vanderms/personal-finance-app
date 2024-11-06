@@ -2,6 +2,7 @@ import { Category } from './category.model';
 
 export type TransactionDTO = {
   id?: string;
+  userId?: string;
   counterparty?: string;
   category?: Category;
   date?: Date;
@@ -10,6 +11,7 @@ export type TransactionDTO = {
 
 export class Transaction {
   protected readonly id?: string;
+  protected readonly userId?: string;
   protected readonly counterparty?: string;
   protected readonly category?: Category;
   protected readonly date?: Date;
@@ -17,6 +19,7 @@ export class Transaction {
 
   constructor(dto: TransactionDTO) {
     this.id = dto.id;
+    this.userId = dto.userId;
     this.counterparty = dto.counterparty;
     this.category = dto.category;
     this.date = dto.date;
@@ -47,7 +50,11 @@ export class Transaction {
     return this.amount;
   }
 
-  validateCounterparty(): Set<string> {
+  getUserId() {
+    return this.userId;
+  }
+
+  counterpartyErrors(): Set<string> {
     const errors = new Set<string>();
     if (!this.counterparty || this.counterparty.trim().length === 0) {
       errors.add(TransactionErrors.counterparty.required);
@@ -55,7 +62,15 @@ export class Transaction {
     return errors;
   }
 
-  validateCategory() {
+  userIdErrors() {
+    const errors = new Set<string>();
+    if (!this.userId || this.userId.length === 0) {
+      errors.add(TransactionErrors.userId.unknown);
+    }
+    return errors;
+  }
+
+  categoryErrors() {
     const errors = new Set<string>();
     if (!this.category || this.category.trim().length === 0) {
       errors.add(TransactionErrors.category.required);
@@ -63,7 +78,7 @@ export class Transaction {
     return errors;
   }
 
-  validateDate() {
+  dateErrors() {
     if (!this.date) {
       return new Set(TransactionErrors.date.required);
     }
@@ -72,8 +87,12 @@ export class Transaction {
       return new Set(TransactionErrors.date.invalid);
     }
 
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    const local = new Date();
+    const yyyy = local.getFullYear();
+    const mm = String(local.getMonth()).padStart(2, '0');
+    const dd = String(local.getDate()).padStart(2, '0');
+
+    const today = new Date(`${yyyy}-${mm}-${dd}T23:59:59:999Z`);
 
     if (this.date.getTime() > today.getTime()) {
       return new Set(TransactionErrors.date.future);
@@ -82,7 +101,7 @@ export class Transaction {
     return new Set<string>();
   }
 
-  validateAmount() {
+  amountErrors() {
     if (!this.amount) {
       return new Set<string>(TransactionErrors.amount.required);
     }
@@ -92,11 +111,25 @@ export class Transaction {
 
     return new Set<string>();
   }
+
+  isValid() {
+    const errors =
+      this.counterpartyErrors().size +
+      this.categoryErrors().size +
+      this.dateErrors().size +
+      this.amountErrors().size +
+      this.userIdErrors().size;
+
+    return errors === 0;
+  }
 }
 
 export const TransactionErrors = {
   counterparty: {
     required: 'Counterparty is required',
+  },
+  userId: {
+    unknown: 'Unknown user',
   },
   category: {
     required: 'Category is required',
