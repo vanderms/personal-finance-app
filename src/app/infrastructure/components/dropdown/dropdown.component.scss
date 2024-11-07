@@ -1,0 +1,7 @@
+:host {
+  position: relative;
+}
+
+label:not(:last-child) {
+  border-bottom: 1px solid var(--neutral-100);
+}

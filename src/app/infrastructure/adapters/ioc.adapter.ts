@@ -7,6 +7,7 @@ import { UserNotificationAdapterImpl } from './user-notification.adapter.impl';
 import { UserNotificationAdapter } from '../../application/adapters/user-notification.adapter';
 import { UserAdapter } from '../../application/adapters/user.adapter';
 import { UserAdapterImpl } from './user.adapter.impl';
+import { AddTransactionInteractor } from '../../application/usecases/add-transaction.interactor';
 
 const HttpAdapterProvider: Provider = {
   provide: HttpAdapter,
@@ -46,10 +47,23 @@ export const UserAdapterProvider: Provider = {
   deps: [LoginInteractor, SignupInteractor, HttpAdapter],
 };
 
+const AddTransactionProvider: Provider = {
+  provide: AddTransactionInteractor,
+  useFactory: (
+    userAdapter: UserAdapter,
+    httpAdapter: HttpAdapter,
+    userNotificationAdapter: UserNotificationAdapter,
+  ) => {
+    return new AddTransactionInteractor(userAdapter, httpAdapter, userNotificationAdapter);
+  },
+  deps: [UserAdapter, HttpAdapter, UserNotificationAdapter],
+};
+
 export const ApplicationProviders = [
   HttpAdapterProvider,
   UserNotificationAdapterProvider,
   SignupInteractorProvider,
   LoginInteractorProvider,
   UserAdapterProvider,
+  AddTransactionProvider,
 ];

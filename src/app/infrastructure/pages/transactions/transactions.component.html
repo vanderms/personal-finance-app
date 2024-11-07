@@ -3,11 +3,28 @@
   <main class="mx-auto w-[91.46%]">
     <header class="mt-6 flex h-14 items-center justify-between">
       <h1 class="text-preset-1 text-neutral-900">Transactions</h1>
-      <button class="button-primary">+ Add <span class="hidden">New Transaction</span></button>
+      <button class="button-primary" (click)="dialog().showModal()">
+        + Add <span class="hidden">New Transaction</span>
+      </button>
     </header>
   </main>
 
   <ui-dialog title="Add Transaction">
-    <form action="" method="post"></form>
+    <form class="mt-4 grid gap-4" method="post">
+      @if (transactionForm(); as transaction) {
+        <ui-textbox
+          label="Recipient / Sender"
+          [value]="transaction.getCounterparty()"
+          (componentChange)="addInteractor.patchTransaction({ counterparty: $event })"
+          (componentBlur)="counterpartyTouched.set(true)"
+        >
+        </ui-textbox>
+        <ui-dropdown name="Category">
+          @for (category of categories; track category) {
+            <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
+          }
+        </ui-dropdown>
+      }
+    </form>
   </ui-dialog>
 </div>

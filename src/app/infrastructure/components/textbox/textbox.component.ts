@@ -13,7 +13,12 @@ import { ForceValueSyncDirective } from '../../directives/force-sync.directive';
 })
 export class TextboxComponent {
   @Input({ required: true }) label: string = '';
-  @Input() value: string = '';
+  @Input() set value(x: string | undefined | undefined) {
+    this._value = x ?? '';
+  }
+
+  protected _value: string = '';
+
   @Input() type: 'text' | 'date' | 'number' | 'email' | 'password' | 'textarea' = 'text';
   @Input() name?: string;
   @Input() invalid: boolean = false;
