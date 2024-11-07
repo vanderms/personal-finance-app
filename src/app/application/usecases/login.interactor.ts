@@ -17,12 +17,12 @@ export class LoginInteractor {
     return this.user.asObservable().pipe(
       map((user) => {
         user.usernameErrors = () => {
-          if (user.getUsername().length === 0) return new Set(UserErrors.Username.Required);
+          if (user.getUsername().length === 0) return new Set([UserErrors.Username.Required]);
           return new Set<string>();
         };
 
         user.passwordErrors = () => {
-          if (user.getPassword().length === 0) return new Set(UserErrors.Password.Required);
+          if (user.getPassword().length === 0) return new Set([UserErrors.Password.Required]);
           return new Set<string>();
         };
 

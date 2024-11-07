@@ -1,0 +1,14 @@
+input,
+textarea {
+  outline: none;
+}
+
+.field-container:has([aria-invalid='true']) {
+  border: 1px solid var(--red);
+  outline: 2px solid var(--red);
+}
+
+.field-container:has(*:focus) {
+  border: 1px solid var(--blue);
+  outline: 3px solid var(--blue);
+}

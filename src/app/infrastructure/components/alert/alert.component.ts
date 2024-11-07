@@ -2,15 +2,13 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   inject,
-  signal,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, startWith, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, startWith, tap } from 'rxjs';
 import { UserNotificationAdapter } from '../../../application/adapters/user-notification.adapter';
-import { DialogComponent } from '../dialog/dialog.component';
 import { UserNotification } from '../../../util/dtos/use-notification.dto';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-alert',

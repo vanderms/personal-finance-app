@@ -4,7 +4,7 @@ import { IconComponent } from '../icon/icon.component';
 import { BehaviorSubject, filter, firstValueFrom, fromEvent, map } from 'rxjs';
 
 @Component({
-  selector: 'app-dialog',
+  selector: 'ui-dialog',
   standalone: true,
   imports: [CommonModule, IconComponent],
   templateUrl: './dialog.component.html',
@@ -13,11 +13,11 @@ import { BehaviorSubject, filter, firstValueFrom, fromEvent, map } from 'rxjs';
 export class DialogComponent {
   @Input({ required: true }) title = '';
 
-  @Input({ required: true }) primaryAction = '';
+  @Input() primaryAction?: string;
 
   @Input() type: 'danger' | 'info' = 'info';
 
-  @Input() secondaryAction?: string = 'TEste';
+  @Input() secondaryAction?: string;
 
   private dialog$ = new BehaviorSubject<HTMLDialogElement | null>(null);
 
@@ -34,6 +34,14 @@ export class DialogComponent {
   onClose(dialog: HTMLDialogElement) {
     console.log(dialog.returnValue);
     this.closeModal.emit(dialog.returnValue);
+  }
+
+  async close() {
+    const dialog = await firstValueFrom(
+      this.dialog$.pipe(filter((dialog) => this.filterDialog(dialog))),
+    );
+
+    dialog.close();
   }
 
   async showModal(): Promise<string> {

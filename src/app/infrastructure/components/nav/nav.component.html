@@ -12,7 +12,7 @@
           href=""
           [attr.aria-current]="item.text === active ? 'page' : undefined"
         >
-          <app-icon [iconName]="item.icon"></app-icon>
+          <ui-icon [iconName]="item.icon" />
           <span class="text-preset-5-bold lg:text-preset-3 hidden md:block">{{ item.text }}</span>
         </a>
       </li>

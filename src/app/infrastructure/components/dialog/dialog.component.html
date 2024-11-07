@@ -8,27 +8,30 @@
       {{ title }}
     </h2>
     <button aria-label="close modal" (click)="dialog.close()">
-      <app-icon iconName="close"></app-icon>
+      <ui-icon iconName="close"></ui-icon>
     </button>
   </div>
   <div>
     <ng-content></ng-content>
   </div>
-  <form method="dialog" class="mt-5">
-    <button
-      [value]="primaryAction"
-      class="w-full"
-      [ngClass]="[type === 'danger' ? 'button-danger' : 'button-danger']"
-    >
-      {{ primaryAction }}
-    </button>
-    @if (secondaryAction) {
+  @if (primaryAction) {
+    <form method="dialog" class="mt-5">
       <button
-        [value]="secondaryAction"
-        class="text-preset-4 mt-5 w-full text-center text-neutral-500 hover:text-neutral-900"
+        [value]="primaryAction"
+        class="w-full"
+        [ngClass]="[type === 'danger' ? 'button-danger' : 'button-danger']"
       >
-        {{ secondaryAction }}
+        {{ primaryAction }}
       </button>
-    }
-  </form>
+
+      @if (secondaryAction) {
+        <button
+          [value]="secondaryAction"
+          class="text-preset-4 mt-5 w-full text-center text-neutral-500 hover:text-neutral-900"
+        >
+          {{ secondaryAction }}
+        </button>
+      }
+    </form>
+  }
 </dialog>

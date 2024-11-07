@@ -5,7 +5,6 @@ import {
   computed,
   inject,
   OnInit,
-  Signal,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -14,13 +13,12 @@ import { firstValueFrom } from 'rxjs';
 import { UserAdapter } from '../../../application/adapters/user.adapter';
 import { LoginInteractor } from '../../../application/usecases/login.interactor';
 import { SignupInteractor } from '../../../application/usecases/signup.interactor';
+import { UserDTO } from '../../../domain/user.model';
 import { IconComponent } from '../../components/icon/icon.component';
+import { ForceValueSyncDirective } from '../../directives/force-sync.directive';
 import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
 import { HomeLayoutComponent } from './home-layout/home-layout.component';
-import { ForceValueSyncDirective } from '../../directives/force-sync.directive';
-import { UserDTO } from '../../../domain/user.model';
-
-type InnerSignal<T> = T extends Signal<infer U> ? U : never;
+import { TextboxComponent } from '../../components/textbox/textbox.component';
 
 @Component({
   selector: 'app-signup',
@@ -33,6 +31,7 @@ type InnerSignal<T> = T extends Signal<infer U> ? U : never;
     IdHashPipe,
     IdHashSetPipe,
     ForceValueSyncDirective,
+    TextboxComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -90,22 +89,24 @@ export class HomePageComponent implements OnInit {
     return this.passwordVisible() ? 'text' : 'password';
   });
 
-  protected touched = {
-    username: signal(false),
-    email: signal(false),
-    password: signal(false),
-  };
+  protected touched = signal({
+    username: false,
+    email: false,
+    password: false,
+  });
+
+  protected passwordHints = new Set(['Password must be at least 8 characters']);
+
+  protected touch(value: { username?: boolean; email?: boolean; password?: boolean }) {
+    this.touched.update((current) => ({ ...current, ...value }));
+  }
 
   private markAllAsTouched() {
-    this.touched.email.set(true);
-    this.touched.password.set(true);
-    this.touched.username.set(true);
+    this.touched.set({ username: true, email: true, password: true });
   }
 
   private markAllAsUnTouched() {
-    this.touched.email.set(false);
-    this.touched.password.set(false);
-    this.touched.username.set(false);
+    this.touched.set({ username: false, email: false, password: false });
   }
 
   async ngOnInit() {

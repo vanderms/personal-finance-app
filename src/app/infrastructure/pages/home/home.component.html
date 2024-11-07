@@ -4,99 +4,48 @@
       <article class="w-full max-w-[35rem] rounded-xl bg-background-base px-5 py-6 md:p-8">
         <h1 class="text-preset-1">{{ titleText() }}</h1>
         <form class="mt-8 grid gap-4" novalidate (submit)="submitForm($event)">
-          <div class="input-field" *ngIf="user.usernameErrors() as usernameErrors">
-            <label>
-              <span>Name</span>
-              <input
-                #name
-                type="text"
-                name="name"
-                size="1"
-                appForceValueSync
-                [value]="user.getUsername()"
-                (input)="patchUser({ username: name.value })"
-                (blur)="touched.username.set(true)"
-                [attr.aria-invalid]="touched.username() && usernameErrors.size"
-                [attr.aria-describedby]="usernameErrors | idHashSet: 'name'"
-              />
-            </label>
-            <div [class.hidden]="!(touched.username() && usernameErrors.size)">
-              @for (error of usernameErrors; track error) {
-                <p class="input-field__error-message" [id]="error | IdHash: 'name'">
-                  {{ error }}
-                </p>
-              }
-            </div>
-          </div>
+          <ui-textbox
+            label="Name"
+            [value]="user.getUsername()"
+            [invalid]="touched().username && user.usernameErrors().size > 0"
+            (componentBlur)="touch({ username: true })"
+            (componentChange)="patchUser({ username: $event })"
+            [errors]="user.usernameErrors()"
+          ></ui-textbox>
+
           @if (page() === 'signup') {
-            <div class="input-field" *ngIf="user.emailErrors() as emailErrors">
-              <label>
-                <span>Email</span>
-                <input
-                  #email
-                  type="email"
-                  size="1"
-                  name="email"
-                  appForceValueSync
-                  [value]="user.getEmail()"
-                  (input)="patchUser({ email: email.value })"
-                  (blur)="touched.email.set(true)"
-                  [attr.aria-describedby]="emailErrors | idHashSet: 'email'"
-                />
-              </label>
-              <div [class.hidden]="!(touched.email() && emailErrors.size)">
-                @for (error of emailErrors; track error) {
-                  <p class="input-field__error-message" [id]="error | IdHash: 'email'">
-                    {{ error }}
-                  </p>
-                }
-              </div>
-            </div>
+            <ui-textbox
+              label="Email"
+              [value]="user.getEmail()"
+              [invalid]="touched().email && user.emailErrors().size > 0"
+              (componentBlur)="touch({ email: true })"
+              (componentChange)="patchUser({ email: $event })"
+              [errors]="user.emailErrors()"
+            ></ui-textbox>
           }
-          <div class="input-field" *ngIf="user.passwordErrors() as passwordErrors">
-            <label>
-              <span>Create Password</span>
-              <input
-                #password
-                size="1"
-                appForceValueSync
-                [value]="user.getPassword()"
-                (input)="patchUser({ password: password.value })"
-                (blur)="touched.password.set(true)"
-                [type]="passwordType()"
-                name="password"
-                [attr.aria-describedby]="
-                  passwordErrors.size > 0
-                    ? (passwordErrors | idHashSet: 'password')
-                    : 'password-hint'
-                "
-              />
-            </label>
+
+          <ui-textbox
+            [label]="page() === 'signup' ? 'Create Password' : 'Password'"
+            [value]="user.getPassword()"
+            [type]="passwordType()"
+            [invalid]="touched().password && user.passwordErrors().size > 0"
+            (componentBlur)="touch({ password: true })"
+            (componentChange)="patchUser({ password: $event })"
+            [errors]="user.passwordErrors()"
+            [hints]="passwordHints"
+          >
             <button
-              class="input-field__icon h-fit w-fit"
+              ngProjectAs="ui-textbox-after"
+              class="grid place-items-center"
               type="button"
               aria-label="show password"
               [attr.aria-pressed]="passwordVisible()"
               (mousedown)="passwordVisible.set(true)"
               (mouseup)="passwordVisible.set(false)"
             >
-              <app-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
+              <ui-icon [iconName]="passwordVisible() ? 'eye-slash' : 'eye'" />
             </button>
-            @for (error of passwordErrors; track error) {
-              <p
-                [class.hidden]="!(touched.password() && passwordErrors.size)"
-                class="input-field__error-message"
-                [id]="error | IdHash: 'password'"
-              >
-                {{ error }}
-              </p>
-            }
-            @if (getPage()() === 'signup' && (!touched.password() || passwordErrors.size)) {
-              <p class="input-field__hint" id="password-hint">
-                Password must be at least 8 characters
-              </p>
-            }
-          </div>
+          </ui-textbox>
 
           <button class="button-primary mt-4">{{ buttonText() }}</button>
         </form>

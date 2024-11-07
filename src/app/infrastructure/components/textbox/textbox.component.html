@@ -1,0 +1,55 @@
+<div class="w-full">
+  <label [for]="id.field" class="text-preset-5-bold text-neutral-500">{{ label }}</label>
+
+  <div
+    class="field-container mt-1 flex w-full items-center gap-4 rounded-lg border border-neutral-500 px-4"
+  >
+    @if (type === 'textarea') {
+      <textarea
+        #field
+        appForceValueSync
+        [name]="name"
+        [id]="id.field"
+        class="h-32 w-full resize-none pt-4"
+        size="1"
+        [value]="value"
+        (input)="componentChange.emit(field.value)"
+        (blur)="componentBlur.emit()"
+        [attr.aria-invalid]="invalid"
+        [attr.aria-describedby]="id.describedBy"
+      ></textarea>
+    } @else {
+      <ng-content select="ui-textbox-before"></ng-content>
+      <input
+        #field
+        appForceValueSync
+        [id]="id.field"
+        class="h-[2.6875rem] flex-grow rounded-lg"
+        [type]="type"
+        [attr.name]="name"
+        size="1"
+        [value]="value"
+        (input)="componentChange.emit(field.value)"
+        (blur)="componentBlur.emit()"
+        [attr.aria-invalid]="invalid"
+        [attr.aria-describedby]="id.describedBy"
+      />
+      <ng-content select="ui-textbox-after"></ng-content>
+    }
+  </div>
+  <ul [id]="id.describedBy">
+    @if (invalid) {
+      @for (error of errors; track error) {
+        <li class="text-preset-5-bold mt-1 text-right text-red">
+          {{ error }}
+        </li>
+      }
+    } @else {
+      @for (hint of log(hints); track hint) {
+        <li class="text-preset-5-bold mt-1 text-right text-neutral-500">
+          {{ hint }}
+        </li>
+      }
+    }
+  </ul>
+</div>

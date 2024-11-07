@@ -1,10 +1,10 @@
 @if (alert$ | async; as alert) {
-  <app-dialog
+  <ui-dialog
     [title]="alert.title"
     [primaryAction]="alert.primaryAction"
     [type]="alert.type"
     (closeModal)="onClose($event)"
   >
     <p class="text-preset-4 mt-5 text-neutral-500">{{ alert.text }}</p>
-  </app-dialog>
+  </ui-dialog>
 }

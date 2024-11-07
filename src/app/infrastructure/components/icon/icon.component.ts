@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core
 import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
 @Component({
-  selector: 'app-icon',
+  selector: 'ui-icon',
   standalone: true,
   imports: [SafeHtmlPipe],
   templateUrl: './icon.component.html',
