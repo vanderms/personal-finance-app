@@ -7,7 +7,7 @@ import { Singleton } from '../../util/decorators/singleton.decorator';
 
 @Singleton()
 export class HttpAdapterImpl extends HttpAdapter {
-  private API = 'https://personal-finance-app-drx.pages.dev/api/v1/controllers/';
+  private API = 'https://personal-finance-app-drx.pages.dev/api/v1/routes/';
 
   private loadingCounter = new BehaviorSubject(0);
 

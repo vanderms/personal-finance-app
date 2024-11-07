@@ -5,9 +5,6 @@ import { Properties } from 'util/properties/properties';
 
 const CommomHeader = {
   'Content-type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 } as const;
 
 export class LoginResponse extends Response {

@@ -1,0 +1,34 @@
+<dialog
+  #dialog
+  (close)="onClose(dialog)"
+  class="w-[89.3333%] max-w-[35rem] rounded-xl px-5 py-6 md:p-8"
+>
+  <div class="grid grid-cols-[1fr,2rem] gap-2">
+    <h2 class="text-preset-2 md:text-preset-1 text-neutral-900">
+      {{ title }}
+    </h2>
+    <button aria-label="close modal" (click)="dialog.close()">
+      <app-icon iconName="close"></app-icon>
+    </button>
+  </div>
+  <div>
+    <ng-content></ng-content>
+  </div>
+  <form method="dialog" class="mt-5">
+    <button
+      [value]="primaryAction"
+      class="w-full"
+      [ngClass]="[type === 'danger' ? 'button-danger' : 'button-danger']"
+    >
+      {{ primaryAction }}
+    </button>
+    @if (secondaryAction) {
+      <button
+        [value]="secondaryAction"
+        class="text-preset-4 mt-5 w-full text-center text-neutral-500 hover:text-neutral-900"
+      >
+        {{ secondaryAction }}
+      </button>
+    }
+  </form>
+</dialog>

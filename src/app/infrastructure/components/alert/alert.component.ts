@@ -1,13 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, tap } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, startWith, tap } from 'rxjs';
 import { UserNotificationAdapter } from '../../../application/adapters/user-notification.adapter';
-import { IconComponent } from '../icon/icon.component';
+import { DialogComponent } from '../dialog/dialog.component';
+import { UserNotification } from '../../../util/dtos/use-notification.dto';
 
 @Component({
   selector: 'app-alert',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, DialogComponent],
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,29 +23,32 @@ import { IconComponent } from '../icon/icon.component';
 export class AlertComponent {
   private alertService = inject(UserNotificationAdapter);
 
-  private dialog$ = new BehaviorSubject<HTMLDialogElement | null>(null);
+  private child = new BehaviorSubject<DialogComponent | null>(null);
 
-  private nonNullDialog$ = this.dialog$.pipe(
+  private dialogComponent$ = this.child.pipe(
     filter(<T>(dialog: T | null): dialog is T => !!dialog),
   );
 
-  @ViewChild('dialog') set dialog(value: ElementRef<HTMLDialogElement>) {
-    this.dialog$.next(value.nativeElement);
+  @ViewChild(DialogComponent) set dialogComponent(value: DialogComponent) {
+    this.child.next(value);
   }
 
   protected alert$ = combineLatest([
     this.alertService.getNotifications(),
-    this.nonNullDialog$,
+    this.dialogComponent$,
   ]).pipe(
     filter(([alerts]) => !!alerts[0]),
-
     tap(([_, dialog]) => dialog.showModal()),
     map(([alert]) => alert[0]),
+    startWith({
+      title: '',
+      text: '',
+      primaryAction: '',
+      type: 'info',
+    } as UserNotification),
   );
 
-  async onClose() {
-    const dialog = await firstValueFrom(this.nonNullDialog$);
-    console.log(dialog.returnValue);
-    this.alertService.resolve(dialog.returnValue);
+  async onClose(value: string) {
+    this.alertService.resolve(value);
   }
 }

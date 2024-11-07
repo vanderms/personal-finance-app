@@ -23,6 +23,7 @@ export class UserNotificationAdapterImpl extends UserNotificationAdapter {
 
   override resolve(action: string) {
     const next = this.state.value[0];
+    console.log(action);
 
     if (!next) {
       const errorMessage = 'Invalid State: there should be at leat one alert on the queue';
