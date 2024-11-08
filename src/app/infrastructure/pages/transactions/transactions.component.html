@@ -3,14 +3,14 @@
   <main class="mx-auto w-[91.46%]">
     <header class="mt-6 flex h-14 items-center justify-between">
       <h1 class="text-preset-1 text-neutral-900">Transactions</h1>
-      <button class="button-primary" (click)="dialog().showModal()">
-        + Add <span class="hidden">New Transaction</span>
+      <button class="button-primary flex gap-1" (click)="openRecordTransactionDialog()">
+        + Record <span class="hidden md:inline"> New Transaction</span>
       </button>
     </header>
   </main>
 
-  <ui-dialog title="Add Transaction">
-    <form class="mt-4 grid gap-4" method="post">
+  <ui-dialog title="Record New Transaction">
+    <form class="mt-4 grid gap-4" method="post" (submit)="submitRecordTransactionForm($event)">
       @if (transactionForm(); as transaction) {
         <ui-textbox
           label="Recipient / Sender"
@@ -59,6 +59,7 @@
         >
           <p ngProjectAs="ui-textbox-before">$</p>
         </ui-textbox>
+        <button class="button-primary">Record Transaction</button>
       }
     </form>
   </ui-dialog>

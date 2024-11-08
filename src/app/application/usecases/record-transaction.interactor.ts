@@ -6,7 +6,7 @@ import { HttpAdapter } from '../adapters/http.adapter';
 import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
 
 @Singleton()
-export class AddTransactionInteractor {
+export class RecordTransactionInteractor {
   constructor(
     private userAdapter: UserAdapter,
     private httpAdapter: HttpAdapter,
@@ -42,7 +42,7 @@ export class AddTransactionInteractor {
         return false;
       }
 
-      const response = await this.httpAdapter.post('transaction/add', transaction);
+      const response = await this.httpAdapter.post('transaction/record', transaction);
 
       if (response.ok) {
         return true;

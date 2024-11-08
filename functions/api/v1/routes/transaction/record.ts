@@ -1,6 +1,6 @@
 import { AuthHelper } from 'api/v1/helpers/auth.helper';
 import { TransactionRepository } from 'api/v1/repositories/transaction.repository';
-import { AddTransactionService } from 'api/v1/services/add-transaction.service';
+import { RecordTransactionService } from 'api/v1/services/record-transaction.service';
 import { TransactionDTO } from 'types/client';
 import { Env } from 'types/env';
 import { BadRequestError } from 'util/errors/bad-request.error';
@@ -18,7 +18,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const transactionRepository = new TransactionRepository(context.env);
 
-    const transactionService = new AddTransactionService(transactionRepository);
+    const transactionService = new RecordTransactionService(transactionRepository);
 
     await transactionService.save(dto);
 

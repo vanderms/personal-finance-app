@@ -3,3 +3,7 @@ button[aria-expanded='true'] {
   outline: 3px solid var(--blue);
 }
 
+button[data-invalid='true'] {
+  border: 1px solid var(--red);
+  outline: 3px solid var(--red);
+}

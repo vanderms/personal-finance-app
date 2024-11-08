@@ -1,10 +1,10 @@
 import { Env } from 'types/env';
 import { TransactionEntity } from '../entities/transaction.entity';
-import { AddTransactionRepository } from '../services/add-transaction.service';
+import { RecordTransactionRepository } from '../services/record-transaction.service';
 import { Singleton } from 'types/client';
 
 @Singleton()
-export class TransactionRepository implements AddTransactionRepository {
+export class TransactionRepository implements RecordTransactionRepository {
   constructor(private env: Env) {}
 
   async save(transaction: TransactionEntity): Promise<TransactionEntity> {

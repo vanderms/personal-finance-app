@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@
 import { NavComponent } from '../../components/nav/nav.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { TextboxComponent } from '../../components/textbox/textbox.component';
-import { AddTransactionInteractor } from '../../../application/usecases/add-transaction.interactor';
+import { RecordTransactionInteractor } from '../../../application/usecases/record-transaction.interactor';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { DropdownOptionComponent } from '../../components/dropdown-option/dropdown-option.component';
@@ -36,7 +36,7 @@ type Touched = {
 export class TransactionsComponent {
   protected dialog = viewChild.required(DialogComponent);
 
-  protected addInteractor = inject(AddTransactionInteractor);
+  protected addInteractor = inject(RecordTransactionInteractor);
 
   protected transactionForm = toSignal(this.addInteractor.getTransaction());
 
@@ -48,17 +48,40 @@ export class TransactionsComponent {
 
   protected dateTouched = signal(false);
 
+  markAllAsTouched() {
+    this.categoryTouched.set(true);
+    this.counterpartyTouched.set(true);
+    this.dateTouched.set(true);
+    this.amountTouched.set(true);
+  }
+
+  markAllAsUnTouched() {
+    this.categoryTouched.set(false);
+    this.counterpartyTouched.set(false);
+    this.dateTouched.set(false);
+    this.amountTouched.set(false);
+  }
+
   protected categories = Object.values(Category);
+
+  openRecordTransactionDialog() {
+    this.addInteractor.resetTransaction();
+    this.markAllAsUnTouched();
+    this.dialog().showModal();
+  }
 
   amountMapper(value: number | undefined) {
     if (value && !isNaN(value)) return String(value);
     return '';
   }
 
-  async submitAddTransaction() {
+  async submitRecordTransactionForm(e: Event) {
+    e.preventDefault();
     const success = await this.addInteractor.addTransaction();
     if (success) {
       this.dialog().close();
+    } else {
+      this.markAllAsTouched();
     }
   }
 }
