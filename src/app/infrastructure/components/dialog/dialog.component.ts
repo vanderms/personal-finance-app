@@ -29,11 +29,11 @@ export class DialogComponent {
     this.dialog$.next(value.nativeElement);
   }
 
-  @Output() closeModal = new EventEmitter<string>();
+  @Output() componentClose = new EventEmitter<string>();
 
   onClose(dialog: HTMLDialogElement) {
     console.log(dialog.returnValue);
-    this.closeModal.emit(dialog.returnValue);
+    this.componentClose.emit(dialog.returnValue);
   }
 
   async close() {

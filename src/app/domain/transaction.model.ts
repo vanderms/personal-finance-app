@@ -100,11 +100,11 @@ export class Transaction {
 
   dateErrors() {
     if (!this.date) {
-      return new Set(TransactionErrors.date.required);
+      return new Set([TransactionErrors.date.required]);
     }
 
     if (isNaN(this.date.getTime())) {
-      return new Set(TransactionErrors.date.invalid);
+      return new Set([TransactionErrors.date.invalid]);
     }
 
     const local = new Date();
@@ -115,7 +115,7 @@ export class Transaction {
     const today = new Date(`${yyyy}-${mm}-${dd}T23:59:59:999Z`);
 
     if (this.date.getTime() > today.getTime()) {
-      return new Set(TransactionErrors.date.future);
+      return new Set([TransactionErrors.date.future]);
     }
 
     return new Set<string>();
@@ -123,10 +123,10 @@ export class Transaction {
 
   amountErrors() {
     if (!this.amount) {
-      return new Set<string>(TransactionErrors.amount.required);
+      return new Set<string>([TransactionErrors.amount.required]);
     }
     if (isNaN(this.amount)) {
-      return new Set<string>(TransactionErrors.amount.number);
+      return new Set<string>([TransactionErrors.amount.number]);
     }
 
     return new Set<string>();
@@ -146,7 +146,7 @@ export class Transaction {
 
 export const TransactionErrors = {
   counterparty: {
-    required: 'Counterparty is required',
+    required: 'Recipient / Sender is required',
   },
   userId: {
     unknown: 'Unknown user',

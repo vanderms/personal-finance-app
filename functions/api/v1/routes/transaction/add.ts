@@ -14,7 +14,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: TransactionDTO = await context.request.json();
 
-    await AuthHelper.assertUserAuthStatus(context, dto.id);
+    await AuthHelper.assertUserAuthStatus(context, dto.userId);
 
     const transactionRepository = new TransactionRepository(context.env);
 

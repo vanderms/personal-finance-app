@@ -13,6 +13,9 @@
     ><span class="flex-grow text-left">{{ drop.value() }}</span>
     <ui-icon iconName="caret-down"></ui-icon>
   </button>
+}
+<ng-content select="ui-dropdown"></ng-content>
+<ul>
   @if (invalid()) {
     @for (error of errors(); track error) {
       <li class="text-preset-5-bold mt-1 text-right text-red">
@@ -26,5 +29,4 @@
       </li>
     }
   }
-}
-<ng-content select="ui-dropdown"></ng-content>
+</ul>

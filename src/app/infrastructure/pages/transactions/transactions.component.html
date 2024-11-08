@@ -17,14 +17,21 @@
           [value]="transaction.getCounterparty()"
           (componentChange)="addInteractor.patchTransaction({ counterparty: $event })"
           (componentBlur)="counterpartyTouched.set(true)"
+          [invalid]="counterpartyTouched() && transaction.counterpartyErrors().size > 0"
+          [errors]="transaction.counterpartyErrors()"
         >
         </ui-textbox>
 
-        <ui-select label="Category">
+        <ui-select
+          label="Category"
+          [invalid]="categoryTouched() && transaction.categoryErrors().size > 0"
+          [errors]="transaction.categoryErrors()"
+        >
           <ui-dropdown
             name="Category"
             [value]="transaction.getCategory()"
             (componentChange)="addInteractor.patchTransaction({ category: $event })"
+            (componentBlur)="categoryTouched.set(true)"
           >
             @for (category of categories; track category) {
               <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
@@ -36,6 +43,9 @@
           type="date"
           [value]="transaction.getDate()?.toISOString()"
           (componentChange)="addInteractor.patchTransaction({ date: $event })"
+          (componentBlur)="dateTouched.set(true)"
+          [invalid]="dateTouched() && transaction.dateErrors().size > 0"
+          [errors]="transaction.dateErrors()"
         >
         </ui-textbox>
         <ui-textbox
@@ -43,6 +53,9 @@
           type="number"
           [value]="amountMapper(transaction.getAmount())"
           (componentChange)="addInteractor.patchTransaction({ amount: $event })"
+          (componentBlur)="amountTouched.set(true)"
+          [invalid]="amountTouched()"
+          [errors]="transaction.amountErrors()"
         >
           <p ngProjectAs="ui-textbox-before">$</p>
         </ui-textbox>

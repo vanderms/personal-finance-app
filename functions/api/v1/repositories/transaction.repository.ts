@@ -11,10 +11,11 @@ export class TransactionRepository implements AddTransactionRepository {
     const id = crypto.randomUUID();
 
     await this.env.DB.prepare(
-      ` INSERT INTO user (id, username, email, password, salt) VALUES (?, ?, ?, ?, ?)`,
+      ` INSERT INTO ftransaction (id, user_id, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
     )
       .bind(
         id,
+        transaction.getUserId(),
         transaction.getCounterparty(),
         transaction.getCategory(),
         transaction.getDate().toISOString(),

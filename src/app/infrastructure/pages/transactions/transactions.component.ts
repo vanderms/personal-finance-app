@@ -54,4 +54,11 @@ export class TransactionsComponent {
     if (value && !isNaN(value)) return String(value);
     return '';
   }
+
+  async submitAddTransaction() {
+    const success = await this.addInteractor.addTransaction();
+    if (success) {
+      this.dialog().close();
+    }
+  }
 }

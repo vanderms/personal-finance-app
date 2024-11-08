@@ -18,6 +18,7 @@ export class AddTransactionService {
       ...transaction.amountErrors(),
       ...transaction.dateErrors(),
       ...transaction.categoryErrors(),
+      ...transaction.userIdErrors(),
     ];
 
     if (errors.length !== 0) {

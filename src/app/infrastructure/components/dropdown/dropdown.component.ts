@@ -40,6 +40,8 @@ export class DropdownComponent {
 
   @Output() componentChange = new EventEmitter<string>();
 
+  @Output() componentBlur = new EventEmitter();
+
   onChange(value: string) {
     this.componentChange.emit(value);
   }
@@ -56,5 +58,6 @@ export class DropdownComponent {
 
   closeDropdown() {
     this._closed.set(true);
+    this.componentBlur.emit();
   }
 }
