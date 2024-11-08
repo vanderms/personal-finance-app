@@ -3,7 +3,7 @@
     [title]="alert.title"
     [primaryAction]="alert.primaryAction"
     [type]="alert.type"
-    (closeModal)="onClose($event)"
+    (componentClose)="onClose($event)"
   >
     <p class="text-preset-4 mt-5 text-neutral-500">{{ alert.text }}</p>
   </ui-dialog>
