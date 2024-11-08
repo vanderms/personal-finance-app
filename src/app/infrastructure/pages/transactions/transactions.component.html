@@ -41,7 +41,7 @@
         <ui-textbox
           label="Date"
           type="date"
-          [value]="transaction.getDate()?.toISOString()"
+          [value]="convertDate(transaction.getDate())"
           (componentChange)="addInteractor.patchTransaction({ date: $event })"
           (componentBlur)="dateTouched.set(true)"
           [invalid]="dateTouched() && transaction.dateErrors().size > 0"
@@ -51,7 +51,7 @@
         <ui-textbox
           label="Amount"
           type="number"
-          [value]="amountMapper(transaction.getAmount())"
+          [value]="convertAmount(transaction.getAmount())"
           (componentChange)="addInteractor.patchTransaction({ amount: $event })"
           (componentBlur)="amountTouched.set(true)"
           [invalid]="amountTouched()"

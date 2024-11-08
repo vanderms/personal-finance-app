@@ -26,8 +26,11 @@ export class Transaction {
       this.category = dto.category;
     }
     if (dto.date) {
-      const date = new Date(dto.date + 'T00:00:00:000Z');
+      const iso = dto.date + 'T00:00:00.000Z';
+      console.log(iso);
+      const date = new Date(iso);
       this.date = date;
+      console.log(this.date);
     }
 
     if (dto.amount !== '') {
@@ -109,10 +112,10 @@ export class Transaction {
 
     const local = new Date();
     const yyyy = local.getFullYear();
-    const mm = String(local.getMonth()).padStart(2, '0');
+    const mm = String(local.getMonth() + 1).padStart(2, '0');
     const dd = String(local.getDate()).padStart(2, '0');
 
-    const today = new Date(`${yyyy}-${mm}-${dd}T23:59:59:999Z`);
+    const today = new Date(`${yyyy}-${mm}-${dd}T23:59:59.999Z`);
 
     if (this.date.getTime() > today.getTime()) {
       return new Set([TransactionErrors.date.future]);

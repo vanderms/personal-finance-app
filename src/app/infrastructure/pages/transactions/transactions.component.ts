@@ -70,9 +70,16 @@ export class TransactionsComponent {
     this.dialog().showModal();
   }
 
-  amountMapper(value: number | undefined) {
+  convertAmount(value: number | undefined) {
     if (value && !isNaN(value)) return String(value);
     return '';
+  }
+
+  convertDate(date: Date | undefined) {
+    if (!date) return '';
+    const converted = date.toISOString().slice(0, 10);
+    console.log(converted);
+    return converted;
   }
 
   async submitRecordTransactionForm(e: Event) {
