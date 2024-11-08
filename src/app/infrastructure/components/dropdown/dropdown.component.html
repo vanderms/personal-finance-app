@@ -1,18 +1,22 @@
+<div class="fixed inset-0 z-40" [class.hidden]="closed()" (click)="closeDropdown()"></div>
 <fieldset
   #fieldset
   [id]="id"
-  class="max-h-64 overflow-y-auto rounded-lg border border-neutral-500 bg-white px-5"
+  class="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-neutral-500 bg-white px-5"
   [class.hidden]="closed()"
+  tabindex="-1"
 >
   <legend class="sr-only">{{ name() }}</legend>
   <div class="grid gap-1">
     @for (option of options(); track $index) {
-      <label class="flex h-11 items-center text-neutral-900">
+      <label class="flex h-11 cursor-pointer items-center text-neutral-900">
         <input
           type="radio"
           [name]="name()"
           class="appearance-none"
+          [checked]="this.value() === option.value()"
           [value]="option.value()"
+          (click)="onClick($event)"
           (change)="onChange(option.value())"
         />
         <ng-container [ngTemplateOutlet]="option.template()"></ng-container>

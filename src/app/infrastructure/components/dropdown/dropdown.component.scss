@@ -1,5 +1,7 @@
 :host {
   position: relative;
+  width: full;
+  display: block;
 }
 
 label:not(:last-child) {

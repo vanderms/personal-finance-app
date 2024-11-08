@@ -1,12 +1,12 @@
-import { Category } from './category.model';
+import { Category, isCategory } from './category.model';
 
 export type TransactionDTO = {
   id?: string;
   userId?: string;
   counterparty?: string;
-  category?: Category;
-  date?: Date;
-  amount?: number;
+  category?: string;
+  date?: string;
+  amount?: number | string;
 };
 
 export class Transaction {
@@ -21,9 +21,18 @@ export class Transaction {
     this.id = dto.id;
     this.userId = dto.userId;
     this.counterparty = dto.counterparty;
-    this.category = dto.category;
-    this.date = dto.date;
-    this.amount = dto.amount;
+    if (isCategory(dto.category)) {
+      this.category = dto.category;
+    }
+    if (dto.date) {
+      const date = new Date(dto.date + 'T00:00:00:000Z');
+      this.date = date;
+    }
+
+    if (dto.amount !== '') {
+      const amount = Number(dto.amount);
+      this.amount = amount;
+    }
   }
 
   patch(dto: TransactionDTO) {

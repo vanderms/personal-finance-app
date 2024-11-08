@@ -8,15 +8,17 @@ import {
   input,
   Output,
   signal,
+  viewChildren,
 } from '@angular/core';
 import { DropdownOptionComponent } from '../dropdown-option/dropdown-option.component';
 import { CommonModule } from '@angular/common';
 import { v4 } from 'uuid';
+import { ForceCheckedSyncDirective } from '../../directives/force-sync.directive';
 
 @Component({
   selector: 'ui-dropdown',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ForceCheckedSyncDirective],
   templateUrl: './dropdown.component.html',
   styleUrl: './dropdown.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +32,11 @@ export class DropdownComponent {
 
   value = input<string>();
 
-  protected closed = signal(true);
+  _closed = signal(true);
+
+  get closed() {
+    return this._closed.asReadonly();
+  }
 
   @Output() componentChange = new EventEmitter<string>();
 
@@ -38,11 +44,17 @@ export class DropdownComponent {
     this.componentChange.emit(value);
   }
 
+  onClick(e: MouseEvent) {
+    if (e.clientX || e.clientY) {
+      this.closeDropdown();
+    }
+  }
+
   openDropdown() {
-    this.closed.set(false);
+    this._closed.set(false);
   }
 
   closeDropdown() {
-    this.closed.set(true);
+    this._closed.set(true);
   }
 }

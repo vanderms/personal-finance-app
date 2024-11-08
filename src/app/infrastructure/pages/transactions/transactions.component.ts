@@ -8,6 +8,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { DropdownOptionComponent } from '../../components/dropdown-option/dropdown-option.component';
 import { Category } from '../../../domain/category.model';
+import { SelectComponent } from '../../components/select/select.component';
 
 type Touched = {
   counterparty: boolean;
@@ -26,6 +27,7 @@ type Touched = {
     TextboxComponent,
     DropdownComponent,
     DropdownOptionComponent,
+    SelectComponent,
   ],
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.scss',

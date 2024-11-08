@@ -1,1 +1,30 @@
-<p>select works!</p>
+@if (dropdown(); as drop) {
+  <p aria-hidden="true" class="text-preset-5-bold text-neutral-500">{{ label() }}</p>
+  <button
+    class="mt-1 flex h-[45px] w-full items-center gap-4 rounded-lg border border-neutral-500 px-5 text-neutral-900"
+    type="button"
+    [attr.aria-controls]="drop.id"
+    [attr.aria-expanded]="!drop.closed()"
+    [attr.aria-label]="ariaLabel()"
+    (click)="onClick()"
+  >
+    <span class="sr-only"
+      >Click to {{ drop.closed() ? 'open' : 'close' }} {{ label() }} menu. Current selected: </span
+    ><span class="flex-grow text-left">{{ drop.value() }}</span>
+    <ui-icon iconName="caret-down"></ui-icon>
+  </button>
+  @if (invalid()) {
+    @for (error of errors(); track error) {
+      <li class="text-preset-5-bold mt-1 text-right text-red">
+        {{ error }}
+      </li>
+    }
+  } @else {
+    @for (hint of hints(); track hint) {
+      <li class="text-preset-5-bold mt-1 text-right text-neutral-500">
+        {{ hint }}
+      </li>
+    }
+  }
+}
+<ng-content select="ui-dropdown"></ng-content>

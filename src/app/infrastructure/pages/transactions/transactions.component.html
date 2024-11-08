@@ -19,11 +19,18 @@
           (componentBlur)="counterpartyTouched.set(true)"
         >
         </ui-textbox>
-        <ui-dropdown name="Category">
-          @for (category of categories; track category) {
-            <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
-          }
-        </ui-dropdown>
+
+        <ui-select label="Category">
+          <ui-dropdown
+            name="Category"
+            [value]="transaction.getCategory()"
+            (componentChange)="addInteractor.patchTransaction({ category: $event })"
+          >
+            @for (category of categories; track category) {
+              <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
+            }
+          </ui-dropdown>
+        </ui-select>
       }
     </form>
   </ui-dialog>
