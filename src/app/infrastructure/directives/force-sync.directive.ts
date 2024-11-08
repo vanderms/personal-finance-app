@@ -9,6 +9,7 @@ export class ForceValueSyncDirective implements DoCheck {
   @Input() isNumber: boolean = false;
 
   private renderer = inject(Renderer2);
+  
   private element = inject(ElementRef).nativeElement;
 
   ngDoCheck(): void {
@@ -25,17 +26,30 @@ export class ForceValueSyncDirective implements DoCheck {
     if (!this.isNumber || this.value === undefined || this.value === this.element.value) {
       return false;
     }
-    
-    const elementValue: string = this.element.value;
 
-    if (elementValue.split('').filter((c) => c === '.' || c === ',').length > 1) {
+    const elementValue: string = this.element.value.replace(',', '.');
+
+    const amountOfDots = elementValue.split('').filter((c) => c === '.').length;
+
+    if (amountOfDots !== 1) {
       return true;
     }
 
-    if (elementValue === this.value + '.' || elementValue === this.value + ',') {
+    const dotIndex = elementValue.indexOf('.');
+
+    if (dotIndex === elementValue.length - 1) {
       return false;
     }
-    
+
+    const realElementValue = Number(elementValue);
+
+    const componentValue = Number(this.value);
+
+    console.log(realElementValue, componentValue);
+
+    if (realElementValue === componentValue) {
+      return false;
+    }
 
     return true;
   }
