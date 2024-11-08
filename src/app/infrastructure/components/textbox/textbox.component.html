@@ -25,7 +25,8 @@
         appForceValueSync
         [id]="id.field"
         class="h-[2.8125rem] flex-grow rounded-lg"
-        [type]="type"
+        [type]="type !== 'number' ? type : 'text'"
+        [isNumber]="type === 'number'"
         [attr.name]="name"
         size="1"
         [value]="_value"
@@ -45,7 +46,7 @@
         </li>
       }
     } @else {
-      @for (hint of log(hints); track hint) {
+      @for (hint of hints; track hint) {
         <li class="text-preset-5-bold mt-1 text-right text-neutral-500">
           {{ hint }}
         </li>

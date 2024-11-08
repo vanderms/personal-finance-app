@@ -1,3 +1,4 @@
+import { decimalAdjust } from '../util/functions/decimal-ajust';
 import { Category, isCategory } from './category.model';
 
 export type TransactionDTO = {
@@ -33,9 +34,19 @@ export class Transaction {
       const amount = Number(dto.amount);
       this.amount = amount;
     }
+
+    if (typeof this.amount === 'number' && !isNaN(this.amount)) {
+      this.amount = decimalAdjust('floor', this.amount, 2);
+    }
   }
 
   patch(dto: TransactionDTO) {
+    dto.amount = String(dto.amount).replace(',', '.');
+
+    if (dto.amount !== '' && isNaN(Number(dto.amount))) {
+      dto.amount = this.amount;
+    }
+
     return new Transaction({ ...this, ...dto });
   }
 

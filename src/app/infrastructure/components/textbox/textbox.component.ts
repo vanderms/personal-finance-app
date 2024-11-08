@@ -25,11 +25,6 @@ export class TextboxComponent {
   @Input() errors = new Set<string>();
   @Input() hints = new Set<string>();
 
-  log<T>(x: T) {
-    console.log(this.hints, x);
-    return x;
-  }
-
   @Input() action: string = '';
 
   id = {

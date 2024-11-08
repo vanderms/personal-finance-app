@@ -31,6 +31,21 @@
             }
           </ui-dropdown>
         </ui-select>
+        <ui-textbox
+          label="Date"
+          type="date"
+          [value]="transaction.getDate()?.toISOString()"
+          (componentChange)="addInteractor.patchTransaction({ date: $event })"
+        >
+        </ui-textbox>
+        <ui-textbox
+          label="Amount"
+          type="number"
+          [value]="amountMapper(transaction.getAmount())"
+          (componentChange)="addInteractor.patchTransaction({ amount: $event })"
+        >
+          <p ngProjectAs="ui-textbox-before">$</p>
+        </ui-textbox>
       }
     </form>
   </ui-dialog>

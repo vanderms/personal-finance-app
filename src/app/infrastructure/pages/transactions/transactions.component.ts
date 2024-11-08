@@ -49,4 +49,9 @@ export class TransactionsComponent {
   protected dateTouched = signal(false);
 
   protected categories = Object.values(Category);
+
+  amountMapper(value: number | undefined) {
+    if (value && !isNaN(value)) return String(value);
+    return '';
+  }
 }
