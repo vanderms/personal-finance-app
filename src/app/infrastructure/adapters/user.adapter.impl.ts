@@ -16,8 +16,7 @@ export class UserAdapterImpl extends UserAdapter {
   ) {
     super();
 
-    console.log('Hey');
-    loginInteractor.loginWithCredentials().then((user) => this.user$.next(user));
+    loginInteractor.loginWithCredentials().then((user) => this.user$.next(new User({ ...user })));
 
     loginInteractor.getNotificationUserHasLogged().subscribe((user) => {
       debugger;

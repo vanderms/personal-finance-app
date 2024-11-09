@@ -67,10 +67,10 @@ export class LoginInteractor {
 
     try {
       const user = this.user.value;
-      const response = await this.httpService.post<User>('user/login', user);
+      const response = await this.httpService.post<UserDTO>('user/login', user);
 
       if (response.ok) {
-        this.notificationLogin.next(response.data);
+        this.notificationLogin.next(new User({ ...response.data }));
         return true;
       }
 

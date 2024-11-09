@@ -60,10 +60,11 @@ export class SignupInteractor {
 
     try {
       const user = this.user.value;
-      const response = await this.httpService.post<User>('user/signup', user);
+      const response = await this.httpService.post<UserDTO>('user/signup', user);
 
       if (response.ok) {
         await this.notificationService.push(this.feedback.Ok);
+        this.notificationLogin.next(new User({ ...response.data }));
         return true;
       }
 
