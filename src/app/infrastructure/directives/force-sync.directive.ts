@@ -9,7 +9,7 @@ export class ForceValueSyncDirective implements DoCheck {
   @Input() isNumber: boolean = false;
 
   private renderer = inject(Renderer2);
-  
+
   private element = inject(ElementRef).nativeElement;
 
   ngDoCheck(): void {

@@ -76,7 +76,7 @@ export class TransactionsComponent {
   }
 
   convertDate(date: Date | undefined) {
-    if (!date) return '';
+    if (!date || isNaN(date.getTime())) return '';
     const converted = date.toISOString().slice(0, 10);
     console.log(converted);
     return converted;

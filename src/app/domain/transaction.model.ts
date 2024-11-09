@@ -46,7 +46,7 @@ export class Transaction {
   patch(dto: TransactionDTO) {
     dto.amount = String(dto.amount).replace(',', '.');
 
-    if (dto.amount !== '' && isNaN(Number(dto.amount))) {
+    if (dto.amount && isNaN(Number(dto.amount))) {
       dto.amount = this.amount;
     }
 
