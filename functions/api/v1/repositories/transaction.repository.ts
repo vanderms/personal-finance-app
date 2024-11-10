@@ -12,7 +12,7 @@ export class TransactionRepository implements RecordTransactionRepository {
 
     const saved = transaction.setId(id);
 
-    console.log(JSON.stringify(saved));
+    console.log(`TransactionRepository.save:: saving transaction ${JSON.stringify(saved)}`);
 
     await this.env.DB.prepare(
       ` INSERT INTO ftransaction (id, user_id, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -26,6 +26,8 @@ export class TransactionRepository implements RecordTransactionRepository {
         saved.getAmount(),
       )
       .run();
+
+    console.log(`TransactionRepository.save:: transaction ${JSON.stringify(saved)} saved.`);
 
     return saved;
   }

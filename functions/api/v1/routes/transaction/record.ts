@@ -14,7 +14,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const dto: TransactionDTO = await context.request.json();
 
-    await AuthHelper.assertUserAuthStatus(context, dto.userId);
+    await AuthHelper.assertUserAuthStatus(context.env, context.request.headers, dto.userId);
 
     const transactionRepository = new TransactionRepository(context.env);
 
@@ -22,9 +22,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     await transactionService.save(dto);
 
+    console.log(`[POST transaction/record]: sending success response.`);
+
     return new OperationSuccessResponse();
   } catch (error) {
-    console.log(`[LOGGING FROM POST /transaction/record]: error: ${error.message}`);
+    //
+    console.log(`[POST transaction/record]: error: ${error.message}`);
 
     if (AuthHelper.isAuthError(error)) {
       return AuthHelper.createErrorResponse(error);

@@ -22,6 +22,7 @@ export class LoginResponse extends Response {
         `${Properties.COOKIES_LOGIN_KEY}=${login.id}`,
         'HttpOnly',
         'Secure',
+        'Path=/',
         `Max-Age=${Properties.COOKIES_LOGIN_DURATION_IN_MILLISECONDS / 1000}`,
         'SameSite=Strict',
       ].join('; '),

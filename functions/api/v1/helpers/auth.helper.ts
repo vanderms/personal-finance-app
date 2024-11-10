@@ -6,33 +6,37 @@ import { UnauthenticatedError, UnauthorizedError } from 'util/errors/unauthentic
 import { InternalServerErrorResponse, UnauthorizedResponse } from 'util/responses/responses';
 
 export class AuthHelper {
-  static async assertUserAuthStatus(
-    context: EventContext<Env, any, Record<string, unknown>>,
-    userId: string | undefined | null,
-  ) {
+  static async assertUserAuthStatus(env: Env, headers: Headers, userId: string | undefined | null) {
     if (!userId) {
       throw new UnauthorizedError();
     }
 
-    const loginRepository = new UserRepository(context.env);
+    const loginRepository = new UserRepository(env);
 
     const loginService = new LoginService(loginRepository);
-
-    const headers = context.request.headers;
 
     const cookies = getCookiesFromHeaders(headers);
 
     const loginCookie = cookies.get('login');
 
+    if (!loginCookie) {
+      console.log(`[AuthHelper.assertUserAuthStatus] error: login cookie is not defined.`);
+      throw new UnauthenticatedError();
+    }
+
     const query = await loginService.getValidLoginAndUserByLoginId(loginCookie);
 
     if (!query) {
+      console.log(`[AuthHelper.assertUserAuthStatus] error: valid login not found.`);
       throw new UnauthenticatedError();
     }
 
     if (query.user.getId() !== userId) {
+      console.log(`[AuthHelper.assertUserAuthStatus] error: login.user.id !== user.id.`);
       throw new UnauthorizedError();
     }
+
+    console.log(`[AuthHelper.assertUserAuthStatus] success.`);
   }
 
   static async isAuthError(error: Error) {

@@ -22,10 +22,13 @@ export class RecordTransactionService {
     ];
 
     if (errors.length !== 0) {
+      console.log(`[RecordTransactionService.save] bad request error`);
       throw new BadRequestError(errors.join('|'));
     }
 
     const saved = this.repository.save(transaction);
+
+    console.log(`[RecordTransactionService.save] success saved`);
 
     return saved;
   }
