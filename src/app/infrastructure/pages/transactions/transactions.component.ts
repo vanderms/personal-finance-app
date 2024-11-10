@@ -38,7 +38,7 @@ export class TransactionsComponent {
 
   protected addInteractor = inject(RecordTransactionInteractor);
 
-  protected transactionForm = toSignal(this.addInteractor.getTransaction());
+  protected formTransaction = toSignal(this.addInteractor.getTransaction());
 
   protected counterpartyTouched = signal(false);
 
@@ -75,16 +75,15 @@ export class TransactionsComponent {
     return '';
   }
 
-  convertDate(date: Date | undefined) {
-    if (!date || isNaN(date.getTime())) return '';
-    const converted = date.toISOString().slice(0, 10);
-    console.log(converted);
+  convertDate(date: string) {
+    if (!date || isNaN(new Date(date).getTime())) return '';
+    const converted = date.slice(0, 10);
     return converted;
   }
 
   async submitRecordTransactionForm(e: Event) {
     e.preventDefault();
-    const success = await this.addInteractor.addTransaction();
+    const success = await this.addInteractor.recordTransaction();
     if (success) {
       this.dialog().close();
     } else {

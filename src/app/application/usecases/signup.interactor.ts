@@ -3,19 +3,20 @@ import { User, UserDTO, UserErrors } from '../../domain/user.model';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 import { HttpAdapter } from '../adapters/http.adapter';
 import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
+import {
+  BadRequestFormNotification,
+  ResourceCreatedNotification,
+  UnknownErrorNotifcation,
+} from '../../util/functions/notifcations';
+import { UserAdapter } from '../adapters/user.adapter';
 
 @Singleton()
 export class SignupInteractor {
   constructor(
     private httpService: HttpAdapter,
     private notificationService: UserNotificationAdapter,
+    private userService: UserAdapter,
   ) {}
-
-  private notificationLogin = new Subject<User>();
-
-  getNotificationUserHasLogged() {
-    return this.notificationLogin.asObservable();
-  }
 
   private user = new BehaviorSubject(new User());
 
@@ -63,14 +64,14 @@ export class SignupInteractor {
       const response = await this.httpService.post<UserDTO>('user/signup', user);
 
       if (response.ok) {
-        await this.notificationService.push(this.feedback.Ok);
-        this.notificationLogin.next(new User({ ...response.data }));
+        await this.notificationService.push(new ResourceCreatedNotification('User'));
+        this.userService.setUser(new User({ ...response.data }));
         return true;
       }
 
       if (response.status === 400) {
         this.updateInUse(response.message, user.getUsername(), user.getEmail());
-        await this.notificationService.push(this.feedback.BadRequest);
+        await this.notificationService.push(new BadRequestFormNotification());
         return false;
       }
 
@@ -78,7 +79,7 @@ export class SignupInteractor {
       //
     } catch (err) {
       console.error(err);
-      await this.notificationService.push(this.feedback.Unknown);
+      await this.notificationService.push(new UnknownErrorNotifcation());
       return false;
     }
   }
@@ -98,25 +99,4 @@ export class SignupInteractor {
       });
     }
   }
-
-  readonly feedback = {
-    Ok: {
-      title: 'Success',
-      text: 'User was created successfully!',
-      type: 'info',
-      primaryAction: 'Continue',
-    },
-    BadRequest: {
-      title: 'Error',
-      text: 'The form has errors, please correct them before submitting it again.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-    Unknown: {
-      title: 'Error',
-      text: 'An unexpected error occurred. Please try again later.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-  } as const;
 }

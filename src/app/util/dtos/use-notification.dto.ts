@@ -1,7 +1,7 @@
-export type UserNotification = {
-  title: string;
-  text: string | string[];
-  type: 'info' | 'danger';
-  primaryAction: string;
-  secondaryAction?: string;
-};
+export interface UserNotification {
+  get title(): string;
+  get text(): string | string[];
+  get type(): 'info' | 'danger';
+  get primaryAction(): string;
+  get secondaryAction(): string | undefined;
+}

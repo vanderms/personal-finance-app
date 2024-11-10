@@ -3,12 +3,18 @@ import { User, UserDTO, UserErrors } from '../../domain/user.model';
 import { UserNotificationAdapterImpl } from '../../infrastructure/adapters/user-notification.adapter.impl';
 import { Singleton } from '../../util/decorators/singleton.decorator';
 import { HttpAdapter } from '../adapters/http.adapter';
+import {
+  BadRequestFormNotification,
+  UnknownErrorNotifcation,
+} from '../../util/functions/notifcations';
+import { UserAdapter } from '../adapters/user.adapter';
 
 @Singleton()
 export class LoginInteractor {
   constructor(
     private httpService: HttpAdapter,
     private alertService: UserNotificationAdapterImpl,
+    private userService: UserAdapter,
   ) {}
 
   private user = new BehaviorSubject(new User());
@@ -31,12 +37,6 @@ export class LoginInteractor {
     );
   }
 
-  private notificationLogin = new Subject<User>();
-
-  getNotificationUserHasLogged() {
-    return this.notificationLogin.asObservable();
-  }
-
   patchUser(partial: UserDTO) {
     this.user.next(this.user.value.patch(partial));
   }
@@ -45,18 +45,7 @@ export class LoginInteractor {
     return this.user.value.getUsername().length === 0 || this.user.value.getPassword().length === 0;
   }
 
-  async loginWithCredentials(): Promise<User | null> {
-    try {
-      const response = await this.httpService.get<User | null>('user/login');
-      if (response.ok && response.data) {
-        return response.data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
 
-    return null;
-  }
 
   async login(): Promise<boolean> {
     const isInvalid = this.isUserInvalid();
@@ -70,12 +59,12 @@ export class LoginInteractor {
       const response = await this.httpService.post<UserDTO>('user/login', user);
 
       if (response.ok) {
-        this.notificationLogin.next(new User({ ...response.data }));
+        this.userService.setUser(new User({ ...response.data }));
         return true;
       }
 
       if (response.status === 400) {
-        await this.alertService.push(this.feedback.BadRequest);
+        await this.alertService.push(new BadRequestFormNotification());
         return false;
       }
 
@@ -83,23 +72,8 @@ export class LoginInteractor {
       //
     } catch (err) {
       console.error(err);
-      await this.alertService.push(this.feedback.Unknown);
+      await this.alertService.push(new UnknownErrorNotifcation());
       return false;
     }
   }
-
-  readonly feedback = {
-    BadRequest: {
-      title: 'Error',
-      text: 'The form has errors, please correct them before submitting it again.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-    Unknown: {
-      title: 'Error',
-      text: 'An unexpected error occurred. Please try again later.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-  } as const;
 }

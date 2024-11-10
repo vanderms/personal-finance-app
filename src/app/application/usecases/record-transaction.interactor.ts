@@ -1,9 +1,15 @@
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { Transaction, TransactionDTO } from '../../domain/transaction.model';
+import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
+import { Transaction } from '../../domain/transaction.model';
 import { Singleton } from '../../util/decorators/singleton.decorator';
-import { UserAdapter } from '../adapters/user.adapter';
+import { createAfterSetDecorator } from '../../util/functions/after-set-decorator';
+import {
+  BadRequestFormNotification,
+  ResourceCreatedNotification,
+  UnknownErrorNotifcation,
+} from '../../util/functions/notifcations';
 import { HttpAdapter } from '../adapters/http.adapter';
 import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
+import { UserAdapter } from '../adapters/user.adapter';
 
 @Singleton()
 export class RecordTransactionInteractor {
@@ -15,69 +21,76 @@ export class RecordTransactionInteractor {
 
   private transaction = new BehaviorSubject(new Transaction({}));
 
-  resetTransaction() {
-    this.transaction.next(new Transaction({}));
-  }
-
   getTransaction() {
-    return this.transaction;
+    return this.transaction.pipe(map((transaction) => this.addDecorators(transaction)));
   }
 
-  patchTransaction(dto: TransactionDTO) {
-    const current = this.transaction.value;
-    this.transaction.next(current.patch(dto));
+  resetTransaction() {
+    this.transaction.next(this.addDecorators(new Transaction({})));
   }
 
-  async addTransaction() {
+  addDecorators(transaction: Transaction) {
+    const notify = (transaction: Transaction) => {
+      this.transaction.next(transaction);
+    };
+
+    transaction.setType = createAfterSetDecorator(transaction.setType.bind(transaction), notify);
+
+    transaction.setCounterparty = createAfterSetDecorator(
+      transaction.setCounterparty.bind(transaction),
+      notify,
+    );
+
+    transaction.setAmount = createAfterSetDecorator(
+      transaction.setAmount.bind(transaction),
+      notify,
+    );
+
+    transaction.setDate = createAfterSetDecorator(transaction.setDate.bind(transaction), notify);
+
+    transaction.setCategory = createAfterSetDecorator(
+      transaction.setCategory.bind(transaction),
+      notify,
+    );
+
+    return transaction;
+  }
+
+  async recordTransaction() {
     try {
       const user = await firstValueFrom(this.userAdapter.getCurrentUser());
 
       if (!user) {
+        console.error('recordTransaction:: no user logged.');
         return false;
       }
 
-      const transaction = this.transaction.value.patch({ userId: user.getId() });
+      const transaction = this.transaction.value.setUserId(user.getId());
 
       if (!transaction.isValid()) {
+        console.warn('recordTransaction: invalid form.');
         return false;
       }
 
       const response = await this.httpAdapter.post('transaction/record', transaction);
 
       if (response.ok) {
+        console.log('recordTransaction: ok response.');
+        this.userNotificationAdapter.push(new ResourceCreatedNotification('Transaction'));
         return true;
       }
 
       if (response.status === 400) {
-        this.userNotificationAdapter.push(this.feedback.BadRequest);
+        console.log('recordTransaction: bad request response.');
+        this.userNotificationAdapter.push(new BadRequestFormNotification());
         return false;
       }
     } catch (error) {
       console.error(error);
     }
 
-    this.userNotificationAdapter.push(this.feedback.Unknown);
+    console.log('recordTransaction: unknown error.');
+    this.userNotificationAdapter.push(new UnknownErrorNotifcation());
     return false;
   }
-
-  readonly feedback = {
-    Ok: {
-      title: 'Success',
-      text: 'Transaction was created successfully!',
-      type: 'info',
-      primaryAction: 'Continue',
-    },
-    BadRequest: {
-      title: 'Error',
-      text: 'The form has errors, please correct them before submitting it again.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-    Unknown: {
-      title: 'Error',
-      text: 'An unexpected error occurred. Please try again later.',
-      type: 'danger',
-      primaryAction: 'Close',
-    },
-  } as const;
 }

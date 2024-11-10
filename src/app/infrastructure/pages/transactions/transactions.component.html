@@ -11,26 +11,26 @@
 
   <ui-dialog title="Record New Transaction">
     <form class="mt-4 grid gap-4" method="post" (submit)="submitRecordTransactionForm($event)">
-      @if (transactionForm(); as transaction) {
+      @if (formTransaction(); as transaction) {
         <ui-textbox
           label="Recipient / Sender"
           [value]="transaction.getCounterparty()"
-          (componentChange)="addInteractor.patchTransaction({ counterparty: $event })"
+          (componentChange)="transaction.setCounterparty($event)"
           (componentBlur)="counterpartyTouched.set(true)"
-          [invalid]="counterpartyTouched() && transaction.counterpartyErrors().size > 0"
-          [errors]="transaction.counterpartyErrors()"
+          [invalid]="counterpartyTouched() && transaction.getCounterpartyErrors().size > 0"
+          [errors]="transaction.getCounterpartyErrors()"
         >
         </ui-textbox>
 
         <ui-select
           label="Category"
-          [invalid]="categoryTouched() && transaction.categoryErrors().size > 0"
-          [errors]="transaction.categoryErrors()"
+          [invalid]="categoryTouched() && transaction.getCategoryErrors().size > 0"
+          [errors]="transaction.getCategoryErrors()"
         >
           <ui-dropdown
             name="Category"
             [value]="transaction.getCategory()"
-            (componentChange)="addInteractor.patchTransaction({ category: $event })"
+            (componentChange)="transaction.setCategory($event)"
             (componentBlur)="categoryTouched.set(true)"
           >
             @for (category of categories; track category) {
@@ -42,20 +42,20 @@
           label="Date"
           type="date"
           [value]="convertDate(transaction.getDate())"
-          (componentChange)="addInteractor.patchTransaction({ date: $event })"
+          (componentChange)="transaction.setDate($event)"
           (componentBlur)="dateTouched.set(true)"
-          [invalid]="dateTouched() && transaction.dateErrors().size > 0"
-          [errors]="transaction.dateErrors()"
+          [invalid]="dateTouched() && transaction.getDateErrors().size > 0"
+          [errors]="transaction.getDateErrors()"
         >
         </ui-textbox>
         <ui-textbox
           label="Amount"
           type="number"
           [value]="convertAmount(transaction.getAmount())"
-          (componentChange)="addInteractor.patchTransaction({ amount: $event })"
+          (componentChange)="transaction.setAmount($event)"
           (componentBlur)="amountTouched.set(true)"
-          [invalid]="amountTouched()"
-          [errors]="transaction.amountErrors()"
+          [invalid]="amountTouched() && transaction.getAmountErrors().size > 0"
+          [errors]="transaction.getAmountErrors()"
         >
           <p ngProjectAs="ui-textbox-before">$</p>
         </ui-textbox>

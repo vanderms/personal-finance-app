@@ -45,8 +45,6 @@ export class ForceValueSyncDirective implements DoCheck {
 
     const componentValue = Number(this.value);
 
-    console.log(realElementValue, componentValue);
-
     if (realElementValue === componentValue) {
       return false;
     }

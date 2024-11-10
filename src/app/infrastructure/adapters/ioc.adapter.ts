@@ -1,17 +1,26 @@
 import { Provider } from '@angular/core';
-import { LoginInteractor } from '../../application/usecases/login.interactor';
-import { SignupInteractor } from '../../application/usecases/signup.interactor';
-import { HttpAdapterImpl } from './http.adapter.impl';
 import { HttpAdapter } from '../../application/adapters/http.adapter';
-import { UserNotificationAdapterImpl } from './user-notification.adapter.impl';
 import { UserNotificationAdapter } from '../../application/adapters/user-notification.adapter';
 import { UserAdapter } from '../../application/adapters/user.adapter';
-import { UserAdapterImpl } from './user.adapter.impl';
+import { LoginInteractor } from '../../application/usecases/login.interactor';
 import { RecordTransactionInteractor } from '../../application/usecases/record-transaction.interactor';
+import { SignupInteractor } from '../../application/usecases/signup.interactor';
+import { HttpAdapterImpl } from './http.adapter.impl';
+import { UserNotificationAdapterImpl } from './user-notification.adapter.impl';
+import { UserAdapterImpl } from './user.adapter.impl';
+import { Router } from '@angular/router';
 
 const HttpAdapterProvider: Provider = {
   provide: HttpAdapter,
   useFactory: () => new HttpAdapterImpl(),
+};
+
+export const UserAdapterProvider: Provider = {
+  provide: UserAdapter,
+  useFactory: (router: Router, httpAdapter: HttpAdapter) => {
+    return new UserAdapterImpl(router, httpAdapter);
+  },
+  deps: [Router, HttpAdapter],
 };
 
 const UserNotificationAdapterProvider: Provider = {
@@ -21,30 +30,18 @@ const UserNotificationAdapterProvider: Provider = {
 
 const SignupInteractorProvider: Provider = {
   provide: SignupInteractor,
-  useFactory: (http: HttpAdapter, alert: UserNotificationAdapterImpl) => {
-    return new SignupInteractor(http, alert);
+  useFactory: (http: HttpAdapter, alert: UserNotificationAdapterImpl, userAdapter: UserAdapter) => {
+    return new SignupInteractor(http, alert, userAdapter);
   },
-  deps: [HttpAdapter, UserNotificationAdapter],
+  deps: [HttpAdapter, UserNotificationAdapter, UserAdapter],
 };
 
 const LoginInteractorProvider: Provider = {
   provide: LoginInteractor,
-  useFactory: (http: HttpAdapter, alert: UserNotificationAdapterImpl) => {
-    return new LoginInteractor(http, alert);
+  useFactory: (http: HttpAdapter, alert: UserNotificationAdapterImpl, user: UserAdapter) => {
+    return new LoginInteractor(http, alert, user);
   },
-  deps: [HttpAdapter, UserNotificationAdapter],
-};
-
-export const UserAdapterProvider: Provider = {
-  provide: UserAdapter,
-  useFactory: (
-    loginInteractor: LoginInteractor,
-    signupInteractor: SignupInteractor,
-    httpAdapter: HttpAdapter,
-  ) => {
-    return new UserAdapterImpl(loginInteractor, signupInteractor, httpAdapter);
-  },
-  deps: [LoginInteractor, SignupInteractor, HttpAdapter],
+  deps: [HttpAdapter, UserNotificationAdapter, UserAdapter],
 };
 
 const AddTransactionProvider: Provider = {
@@ -61,9 +58,9 @@ const AddTransactionProvider: Provider = {
 
 export const ApplicationProviders = [
   HttpAdapterProvider,
+  UserAdapterProvider,
   UserNotificationAdapterProvider,
   SignupInteractorProvider,
   LoginInteractorProvider,
-  UserAdapterProvider,
   AddTransactionProvider,
 ];

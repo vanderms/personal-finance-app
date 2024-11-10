@@ -18,11 +18,11 @@ export class TransactionRepository implements RecordTransactionRepository {
         transaction.getUserId(),
         transaction.getCounterparty(),
         transaction.getCategory(),
-        transaction.getDate().toISOString(),
+        transaction.getDate(),
         transaction.getAmount(),
       )
       .run();
 
-    return transaction.patch({ id });
+    return transaction.setId(id);
   }
 }

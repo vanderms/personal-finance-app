@@ -18,8 +18,6 @@ export class AuthGuard implements CanActivate {
     return this.userAdapter.getCurrentUser().pipe(
       tap((user) => {
         if (!user) {
-          debugger;
-          console.log('Am i being called?');
           this.router.navigate(['/']);
         }
       }),

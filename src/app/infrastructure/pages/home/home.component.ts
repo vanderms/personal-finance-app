@@ -15,10 +15,8 @@ import { LoginInteractor } from '../../../application/usecases/login.interactor'
 import { SignupInteractor } from '../../../application/usecases/signup.interactor';
 import { UserDTO } from '../../../domain/user.model';
 import { IconComponent } from '../../components/icon/icon.component';
-import { ForceValueSyncDirective } from '../../directives/force-sync.directive';
-import { IdHashPipe, IdHashSetPipe } from '../../pipes/id-hash-pipe.pipe';
-import { HomeLayoutComponent } from './home-layout/home-layout.component';
 import { TextboxComponent } from '../../components/textbox/textbox.component';
+import { HomeLayoutComponent } from './home-layout/home-layout.component';
 
 @Component({
   selector: 'app-signup',
@@ -28,9 +26,6 @@ import { TextboxComponent } from '../../components/textbox/textbox.component';
     IconComponent,
     HomeLayoutComponent,
     RouterModule,
-    IdHashPipe,
-    IdHashSetPipe,
-    ForceValueSyncDirective,
     TextboxComponent,
   ],
   templateUrl: './home.component.html',

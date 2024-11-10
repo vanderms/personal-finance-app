@@ -14,11 +14,11 @@ export class RecordTransactionService {
     const transaction = new TransactionEntity(dto);
 
     const errors = [
-      ...transaction.counterpartyErrors(),
-      ...transaction.amountErrors(),
-      ...transaction.dateErrors(),
-      ...transaction.categoryErrors(),
-      ...transaction.userIdErrors(),
+      ...transaction.getCounterpartyErrors(),
+      ...transaction.getAmountErrors(),
+      ...transaction.getDateErrors(),
+      ...transaction.getCategoryErrors(),
+      ...transaction.getUserIdErrors(),
     ];
 
     if (errors.length !== 0) {
