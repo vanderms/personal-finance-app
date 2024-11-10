@@ -21,23 +21,15 @@ import { HomeLayoutComponent } from './home-layout/home-layout.component';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [
-    CommonModule,
-    IconComponent,
-    HomeLayoutComponent,
-    RouterModule,
-    TextboxComponent,
-  ],
+  imports: [CommonModule, IconComponent, HomeLayoutComponent, RouterModule, TextboxComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent {
   private signupInteractor = inject(SignupInteractor);
 
   private loginInteractor = inject(LoginInteractor);
-
-  private userAdapter = inject(UserAdapter);
 
   private routerService = inject(Router);
 
@@ -102,11 +94,6 @@ export class HomePageComponent implements OnInit {
 
   private markAllAsUnTouched() {
     this.touched.set({ username: false, email: false, password: false });
-  }
-
-  async ngOnInit() {
-    const user = await firstValueFrom(this.userAdapter.getCurrentUser());
-    if (user) this.routerService.navigate(['overview']);
   }
 
   async submitForm(e: Event) {

@@ -21,10 +21,10 @@ export class UserAdapterImpl extends UserAdapter {
     try {
       const response = await this.http.get<UserDTO | null>('user/login');
       if (response.ok && response.data) {
-        console.log(`checkCredentials: user logged: ${JSON.stringify(response.data)}`);
+        console.log(`checkCredentials: user logged: ${response.data.id}`);
         this.setUser(new User({ ...response.data }));
       } else {
-        console.log(`checkCredentials: user not logged: ${JSON.stringify(response.data)}`);
+        console.log(`checkCredentials: user not logged: ${JSON.stringify(response)}`);
         this.setUser(null);
       }
     } catch (error) {
@@ -38,11 +38,12 @@ export class UserAdapterImpl extends UserAdapter {
   }
 
   override setUser(user: User | null) {
-    console.log(`setUser: new user: ${user}`);
-    if (this.user$.value !== null && this.user$.value !== undefined && user === null) {
-      this.router.navigate(['/']);
-    }
-
+    console.log(`setUser: new user: ${user?.getId()}`);
     this.user$.next(user);
+    if (user === null) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['overview']);
+    }
   }
 }
