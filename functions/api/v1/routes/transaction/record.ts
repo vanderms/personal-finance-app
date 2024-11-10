@@ -32,6 +32,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return new BadRequestResponse(error);
     }
 
+    console.log(`[LOGGING FROM POST /transaction/record]: error: ${error.message}`);
+
     return new InternalServerErrorResponse();
   }
 };

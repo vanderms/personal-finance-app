@@ -48,7 +48,7 @@ export class InternalServerErrorResponse extends Response {
         message: [],
         data: null,
       }),
-      { headers: CommomHeader, status: 400 },
+      { headers: CommomHeader, status: 500 },
     );
   }
 }
