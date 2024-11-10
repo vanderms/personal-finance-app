@@ -1,8 +1,5 @@
-@if (loadingStatus() === 'loading') {
-  <div
-    role="status"
-    class="l-0 fixed top-0 z-50 grid h-screen w-screen place-items-center bg-[rgba(0,0,0,0.5)]"
-  >
+<dialog #dialog>
+  <div role="status" class="l-0 fixed inset-0 z-50 grid h-screen w-screen place-items-center">
     <p class="sr-only">Loading...</p>
     <div class="lds-roller">
       <div></div>
@@ -15,4 +12,4 @@
       <div></div>
     </div>
   </div>
-}
+</dialog>
