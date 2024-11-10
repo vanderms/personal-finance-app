@@ -24,6 +24,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return new OperationSuccessResponse();
   } catch (error) {
+    console.log(`[LOGGING FROM POST /transaction/record]: error: ${error.message}`);
+
     if (AuthHelper.isAuthError(error)) {
       return AuthHelper.createErrorResponse(error);
     }
@@ -31,8 +33,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (error instanceof BadRequestError) {
       return new BadRequestResponse(error);
     }
-
-    console.log(`[LOGGING FROM POST /transaction/record]: error: ${error.message}`);
 
     return new InternalServerErrorResponse();
   }
