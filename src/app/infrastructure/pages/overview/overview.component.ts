@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { NavComponent } from '../../components/nav/nav.component';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [],
+  imports: [NavComponent],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss',
 })

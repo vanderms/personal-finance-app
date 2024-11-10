@@ -11,7 +11,7 @@ export const routes: Routes = [
   {
     title: 'Overview',
     path: 'overview',
-    canActivate: [AuthGuard],
+    canActivate: [],
     loadComponent: () =>
       import('./infrastructure/pages/overview/overview.component').then((m) => m.OverviewComponent),
   },

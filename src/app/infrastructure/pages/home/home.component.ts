@@ -4,13 +4,10 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
-  signal,
+  signal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { UserAdapter } from '../../../application/adapters/user.adapter';
 import { LoginInteractor } from '../../../application/usecases/login.interactor';
 import { SignupInteractor } from '../../../application/usecases/signup.interactor';
 import { UserDTO } from '../../../domain/user.model';
