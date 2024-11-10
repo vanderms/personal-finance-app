@@ -10,7 +10,7 @@ export interface RecordTransactionRepository {
 export class RecordTransactionService {
   constructor(private repository: RecordTransactionRepository) {}
 
-  save(dto: TransactionDTO) {
+  async save(dto: TransactionDTO) {
     const transaction = new TransactionEntity(dto);
 
     const errors = [
@@ -26,7 +26,7 @@ export class RecordTransactionService {
       throw new BadRequestError(errors.join('|'));
     }
 
-    const saved = this.repository.save(transaction);
+    const saved = await this.repository.save(transaction);
 
     console.log(`[RecordTransactionService.save] success saved`);
 

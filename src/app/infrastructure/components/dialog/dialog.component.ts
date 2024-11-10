@@ -32,7 +32,7 @@ export class DialogComponent {
   @Output() componentClose = new EventEmitter<string>();
 
   onClose(dialog: HTMLDialogElement) {
-    console.log(dialog.returnValue);
+    console.log(`[DialogComponent.onclose] return value: ${dialog.returnValue}.`);
     this.componentClose.emit(dialog.returnValue);
   }
 

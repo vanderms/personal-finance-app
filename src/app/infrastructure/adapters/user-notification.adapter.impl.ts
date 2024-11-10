@@ -16,6 +16,7 @@ export class UserNotificationAdapterImpl extends UserNotificationAdapter {
   }
 
   override push(alert: UserNotification): Promise<string> {
+    console.log(`[UserNotification.push] pushed: ${JSON.stringify(alert)}`);
     return new Promise((resolve) => {
       this.state.next([...this.state.value, { alert, resolve }]);
     });

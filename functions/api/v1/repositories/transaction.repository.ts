@@ -12,22 +12,24 @@ export class TransactionRepository implements RecordTransactionRepository {
 
     const saved = transaction.setId(id);
 
-    console.log(`TransactionRepository.save:: saving transaction ${JSON.stringify(saved)}`);
+    const preparedArgs = [
+      saved.getId(),
+      saved.getUserId(),
+      saved.getCounterparty(),
+      saved.getCategory(),
+      saved.getDate(),
+      saved.getAmount(),
+    ];
+
+    console.log(`TransactionRepository.save:: saving args: (${JSON.stringify(preparedArgs)})`);
 
     await this.env.DB.prepare(
       ` INSERT INTO ftransaction (id, user_id, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
     )
-      .bind(
-        saved.getId(),
-        saved.getUserId(),
-        saved.getCounterparty(),
-        saved.getCategory(),
-        saved.getDate(),
-        saved.getAmount(),
-      )
+      .bind(...preparedArgs)
       .run();
 
-    console.log(`TransactionRepository.save:: transaction ${JSON.stringify(saved)} saved.`);
+    console.log(`TransactionRepository.save:: transaction saved.`);
 
     return saved;
   }
