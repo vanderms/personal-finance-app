@@ -21,13 +21,15 @@ export class UserAdapterImpl extends UserAdapter {
     try {
       const response = await this.http.get<UserDTO | null>('user/login');
       if (response.ok && response.data) {
-        this.user$.next(new User({ ...response.data }));
+        console.log(`checkCredentials: user logged: ${JSON.stringify(response.data)}`);
+        this.setUser(new User({ ...response.data }));
       } else {
-        this.user$.next(null);
+        console.log(`checkCredentials: user not logged: ${JSON.stringify(response.data)}`);
+        this.setUser(null);
       }
     } catch (error) {
       console.error(error);
-      this.user$.next(null);
+      this.setUser(null);
     }
   }
 
@@ -36,7 +38,8 @@ export class UserAdapterImpl extends UserAdapter {
   }
 
   override setUser(user: User | null) {
-    if (this.user$.value !== null && user === null) {
+    console.log(`setUser: new user: ${user}`);
+    if (this.user$.value !== null && this.user$.value !== undefined && user === null) {
       this.router.navigate(['/']);
     }
 
