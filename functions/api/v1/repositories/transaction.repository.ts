@@ -10,19 +10,23 @@ export class TransactionRepository implements RecordTransactionRepository {
   async save(transaction: TransactionEntity): Promise<TransactionEntity> {
     const id = crypto.randomUUID();
 
+    const saved = transaction.setId(id);
+
+    console.log(JSON.stringify(saved));
+
     await this.env.DB.prepare(
       ` INSERT INTO ftransaction (id, user_id, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
     )
       .bind(
-        id,
-        transaction.getUserId(),
-        transaction.getCounterparty(),
-        transaction.getCategory(),
-        transaction.getDate(),
-        transaction.getAmount(),
+        saved.getId(),
+        saved.getUserId(),
+        saved.getCounterparty(),
+        saved.getCategory(),
+        saved.getDate(),
+        saved.getAmount(),
       )
       .run();
 
-    return transaction.setId(id);
+    return saved;
   }
 }
