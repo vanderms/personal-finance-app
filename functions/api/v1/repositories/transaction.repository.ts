@@ -22,15 +22,15 @@ export class TransactionRepository implements RecordTransactionRepository {
       saved.getAmount(),
     ];
 
-    console.log(`TransactionRepository.save:: saving args: (${JSON.stringify(preparedArgs)})`);
+    console.log(`[TransactionRepository.save]: saving args: (${JSON.stringify(preparedArgs)})`);
 
     await this.env.DB.prepare(
-      ` INSERT INTO ftransaction (id, user_id, type, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
+      ` INSERT INTO ftransaction (id, user_id, type, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(...preparedArgs)
       .run();
 
-    console.log(`TransactionRepository.save:: transaction saved.`);
+    console.log(`[TransactionRepository.save]: transaction saved.`);
 
     return saved;
   }
