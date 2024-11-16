@@ -19,6 +19,7 @@ export class RecordTransactionService {
       ...transaction.getDateErrors(),
       ...transaction.getCategoryErrors(),
       ...transaction.getUserIdErrors(),
+      ...transaction.getTypeErrors(),
     ];
 
     if (errors.length !== 0) {

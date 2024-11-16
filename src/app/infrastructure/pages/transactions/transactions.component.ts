@@ -48,11 +48,14 @@ export class TransactionsComponent {
 
   protected dateTouched = signal(false);
 
+  protected typeTouched = signal(false);
+
   markAllAsTouched() {
     this.categoryTouched.set(true);
     this.counterpartyTouched.set(true);
     this.dateTouched.set(true);
     this.amountTouched.set(true);
+    this.typeTouched.set(true);
   }
 
   markAllAsUnTouched() {
@@ -60,6 +63,7 @@ export class TransactionsComponent {
     this.counterpartyTouched.set(false);
     this.dateTouched.set(false);
     this.amountTouched.set(false);
+    this.typeTouched.set(false);
   }
 
   protected categories = Object.values(Category);

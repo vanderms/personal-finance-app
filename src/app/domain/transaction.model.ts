@@ -2,6 +2,10 @@ import { Category, isCategory } from './category.model';
 
 export type TransactionType = 'Expense' | 'Income' | '';
 
+export const isTransactionType = (value: unknown): value is TransactionType => {
+  return value === 'Expense' || value === 'Income';
+};
+
 export type TransactionDTO = {
   id?: string;
   userId?: string;
@@ -85,9 +89,12 @@ export class Transaction {
     return this.type;
   }
 
-  setType(type: TransactionType) {
-    const dto: TransactionDTO = { type };
-    return new Transaction({ ...this, ...dto });
+  setType(type: TransactionType | string) {
+    if (isTransactionType(type)) {
+      const dto: TransactionDTO = { type };
+      return new Transaction({ ...this, ...dto });
+    }
+    return this;
   }
 
   getCounterparty() {
@@ -124,6 +131,16 @@ export class Transaction {
   setAmount(amount: number | string) {
     const dto: TransactionDTO = { amount };
     return new Transaction({ ...this, ...dto });
+  }
+
+  getTypeErrors(): Set<string> {
+    const errors = new Set<string>();
+    if (this.type === '') {
+      errors.add(TransactionErrors.type.required);
+    } else if (this.type !== 'Expense' && this.type !== 'Income') {
+      errors.add(TransactionErrors.type.invalid);
+    }
+    return errors;
   }
 
   getCounterpartyErrors(): Set<string> {
@@ -196,6 +213,10 @@ export class Transaction {
 export const TransactionErrors = {
   counterparty: {
     required: 'Recipient / Sender is required',
+  },
+  type: {
+    required: 'Type is required',
+    invalid: 'Invalid type value',
   },
   userId: {
     unknown: 'Unknown user',

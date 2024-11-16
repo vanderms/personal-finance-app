@@ -12,6 +12,22 @@
   <ui-dialog title="Record New Transaction">
     <form class="mt-4 grid gap-4" method="post" (submit)="submitRecordTransactionForm($event)">
       @if (formTransaction(); as transaction) {
+        <ui-select
+          label="Type"
+          [invalid]="typeTouched() && transaction.getTypeErrors().size > 0"
+          [errors]="transaction.getTypeErrors()"
+        >
+          <ui-dropdown
+            name="Category"
+            [value]="transaction.getType()"
+            (componentChange)="transaction.setType($event)"
+            (componentBlur)="typeTouched.set(true)"
+          >
+            <ui-dropdown-option value="Expense">Expense</ui-dropdown-option>
+            <ui-dropdown-option value="Income">Income</ui-dropdown-option>
+          </ui-dropdown>
+        </ui-select>
+
         <ui-textbox
           label="Recipient / Sender"
           [value]="transaction.getCounterparty()"

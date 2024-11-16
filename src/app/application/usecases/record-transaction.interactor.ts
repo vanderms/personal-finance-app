@@ -61,27 +61,27 @@ export class RecordTransactionInteractor {
       const user = await firstValueFrom(this.userAdapter.getCurrentUser());
 
       if (!user) {
-        console.error('recordTransaction:: no user logged.');
+        console.error('[RecordTransactionInteractor.recordTransaction]:: no user logged.');
         return false;
       }
 
       const transaction = this.transaction.value.setUserId(user.getId());
 
       if (!transaction.isValid()) {
-        console.warn('recordTransaction: invalid form.');
+        console.warn('[RecordTransactionInteractor.recordTransaction]: invalid form.');
         return false;
       }
 
       const response = await this.httpAdapter.post('transaction/record', transaction);
 
       if (response.ok) {
-        console.log('recordTransaction: ok response.');
+        console.log('[RecordTransactionInteractor.recordTransaction]: ok response.');
         this.userNotificationAdapter.push(new ResourceCreatedNotification('Transaction'));
         return true;
       }
 
       if (response.status === 400) {
-        console.log('recordTransaction: bad request response.');
+        console.log('[RecordTransactionInteractor.recordTransaction]: bad request response.');
         this.userNotificationAdapter.push(new BadRequestFormNotification());
         return false;
       }
@@ -89,7 +89,7 @@ export class RecordTransactionInteractor {
       console.error(error);
     }
 
-    console.log('recordTransaction: unknown error.');
+    console.log('[RecordTransactionInteractor.recordTransaction]: unknown error.');
     this.userNotificationAdapter.push(new UnknownErrorNotifcation());
     return false;
   }

@@ -15,6 +15,7 @@ export class TransactionRepository implements RecordTransactionRepository {
     const preparedArgs = [
       saved.getId(),
       saved.getUserId(),
+      saved.getType(),
       saved.getCounterparty(),
       saved.getCategory(),
       saved.getDate(),
@@ -24,7 +25,7 @@ export class TransactionRepository implements RecordTransactionRepository {
     console.log(`TransactionRepository.save:: saving args: (${JSON.stringify(preparedArgs)})`);
 
     await this.env.DB.prepare(
-      ` INSERT INTO ftransaction (id, user_id, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
+      ` INSERT INTO ftransaction (id, user_id, type, counterparty, category, date, amount) VALUES (?, ?, ?, ?, ?, ?)`,
     )
       .bind(...preparedArgs)
       .run();
