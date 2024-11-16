@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, tap } from 'rxjs';
 import { HttpAdapter } from '../../../application/adapters/http.adapter';
 
 @Component({
@@ -12,24 +12,31 @@ import { HttpAdapter } from '../../../application/adapters/http.adapter';
   styleUrl: './loading.component.scss',
 })
 export class LoadingComponent {
-  protected dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
+  private dialog$ = new BehaviorSubject<HTMLDialogElement | undefined>(undefined);
 
-  protected loadingStatus = inject(HttpAdapter)
-    .getLoadingStatus()
-    .pipe(
-      tap((status) => this.controlSpinner(status)),
-      takeUntilDestroyed(),
-    )
-    .subscribe();
+  @ViewChild('dialog') set _dialog(value: ElementRef<HTMLDialogElement>) {
+    this.dialog$.next(value.nativeElement);
+  }
 
-  private controlSpinner(status: 'loading' | 'idle') {
-    console.log(`[LoadingComponent.controlSpinner] setting spinner. Loading: ${status}.`);
+  constructor(http: HttpAdapter) {
+    const dialog = this.dialog$.pipe(filter(<T>(x: T | undefined): x is T => !!x));
 
-    if (status === 'loading') {
-      this.dialog().nativeElement.showModal();
-    } //
-    else {
-      this.dialog().nativeElement.close();
+    combineLatest([dialog, http.getLoadingStatus()])
+      .pipe(
+        tap((tuple) => this._controlSpinner(tuple)),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
+  }
+
+  _controlSpinner(tuple: [HTMLDialogElement, 'loading' | 'idle']) {
+    const [dialog, status] = tuple;
+
+    switch (status) {
+      case 'loading':
+        return dialog.showModal();
+      case 'idle':
+        return dialog.close();
     }
   }
 }

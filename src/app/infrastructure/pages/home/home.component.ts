@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { LoginInteractor } from '../../../application/usecases/login.interactor';
@@ -34,7 +28,7 @@ export class HomePageComponent {
 
   protected loginUser = toSignal(this.loginInteractor.getUser());
 
-  protected page = signal<'login' | 'signup'>('signup');
+  protected page = signal<'login' | 'signup'>('login');
 
   protected getPage() {
     return this.page.asReadonly();
