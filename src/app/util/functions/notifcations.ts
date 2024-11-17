@@ -16,6 +16,17 @@ export class UnknownErrorNotifcation implements UserNotification {
   readonly secondaryAction = undefined;
 }
 
+export class FailedToFetchDataNotification implements UserNotification {
+  constructor(private resource: string) {}
+  readonly title = 'Error';
+  get text() {
+    return `Un unkown error occurred while trying to fetch ${this.resource}!`;
+  }
+  readonly type = 'danger';
+  readonly primaryAction = 'Continue';
+  readonly secondaryAction = undefined;
+}
+
 export class ResourceCreatedNotification implements UserNotification {
   constructor(private resource: string) {}
   readonly title = 'Success';

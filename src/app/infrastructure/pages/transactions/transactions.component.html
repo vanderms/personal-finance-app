@@ -7,6 +7,29 @@
         + Record <span class="hidden md:inline"> New Transaction</span>
       </button>
     </header>
+
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <th>Recipient / Sender</th>
+            <th>Category</th>
+            <th>Transaction Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (transaction of transactions(); track $index) {
+            <tr>
+              <td>{{ transaction.getCounterparty() }}</td>
+              <td>{{ transaction.getCategory() }}</td>
+              <td>{{ transaction.getDate() }}</td>
+              <td>{{ transaction.getAmount() }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
   </main>
 
   <ui-dialog title="Record New Transaction">

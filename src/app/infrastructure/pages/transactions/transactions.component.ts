@@ -9,6 +9,7 @@ import { DropdownComponent } from '../../components/dropdown/dropdown.component'
 import { DropdownOptionComponent } from '../../components/dropdown-option/dropdown-option.component';
 import { Category } from '../../../domain/category.model';
 import { SelectComponent } from '../../components/select/select.component';
+import { ViewTransactionsInteractor } from '../../../application/usecases/view-transactions.interactor';
 
 type Touched = {
   counterparty: boolean;
@@ -38,6 +39,8 @@ export class TransactionsComponent {
 
   protected addInteractor = inject(RecordTransactionInteractor);
 
+  protected viewInteractor = inject(ViewTransactionsInteractor);
+
   protected formTransaction = toSignal(this.addInteractor.getTransaction());
 
   protected counterpartyTouched = signal(false);
@@ -49,6 +52,8 @@ export class TransactionsComponent {
   protected dateTouched = signal(false);
 
   protected typeTouched = signal(false);
+
+  protected transactions = toSignal(this.viewInteractor.getTransactions());
 
   markAllAsTouched() {
     this.categoryTouched.set(true);

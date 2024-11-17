@@ -9,6 +9,7 @@ import { HttpAdapterImpl } from './http.adapter.impl';
 import { UserNotificationAdapterImpl } from './user-notification.adapter.impl';
 import { UserAdapterImpl } from './user.adapter.impl';
 import { Router } from '@angular/router';
+import { ViewTransactionsInteractor } from '../../application/usecases/view-transactions.interactor';
 
 const HttpAdapterProvider: Provider = {
   provide: HttpAdapter,
@@ -44,6 +45,14 @@ const LoginInteractorProvider: Provider = {
   deps: [HttpAdapter, UserNotificationAdapter, UserAdapter],
 };
 
+const ViewTransactionsProvider: Provider = {
+  provide: ViewTransactionsInteractor,
+  useFactory: (http: HttpAdapter, alert: UserNotificationAdapterImpl, user: UserAdapter) => {
+    return new ViewTransactionsInteractor(user, http, alert);
+  },
+  deps: [HttpAdapter, UserNotificationAdapter, UserAdapter],
+};
+
 const AddTransactionProvider: Provider = {
   provide: RecordTransactionInteractor,
   useFactory: (
@@ -62,5 +71,6 @@ export const ApplicationProviders = [
   UserNotificationAdapterProvider,
   SignupInteractorProvider,
   LoginInteractorProvider,
+  ViewTransactionsProvider,
   AddTransactionProvider,
 ];

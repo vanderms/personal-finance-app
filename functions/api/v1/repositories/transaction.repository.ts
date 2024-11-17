@@ -1,10 +1,13 @@
 import { Env } from 'types/env';
 import { TransactionEntity } from '../entities/transaction.entity';
 import { RecordTransactionRepository } from '../services/record-transaction.service';
-import { Singleton } from 'types/client';
+import { Singleton, TransactionDTO } from 'types/client';
+import { ViewTransactionRepository } from '../services/view-transactions.service';
 
 @Singleton()
-export class TransactionRepository implements RecordTransactionRepository {
+export class TransactionRepository
+  implements RecordTransactionRepository, ViewTransactionRepository
+{
   constructor(private env: Env) {}
 
   async save(transaction: TransactionEntity): Promise<TransactionEntity> {
@@ -33,5 +36,23 @@ export class TransactionRepository implements RecordTransactionRepository {
     console.log(`[TransactionRepository.save]: transaction saved.`);
 
     return saved;
+  }
+
+  async getTransactionsByUserId(userId: string): Promise<Set<TransactionDTO>> {
+    console.log(`[TransactionsRepository.getTransactionByUserId] preparing query.`);
+
+    const stmt = this.env.DB.prepare(
+      `SELECT t.id, t.user_id, t.type, t.counterparty, t.category, t.date, t.amount
+        FROM ftransaction t 
+        WHERE t.user_id = ?`,
+    ).bind(userId);
+
+    const transactions = await stmt.run<TransactionDTO>();
+
+    const transactionsSet = new Set(transactions.results);
+
+    console.log(`[TransactionsRepository.getTransactionByUserId] success: returning dto set.`);
+
+    return transactionsSet;
   }
 }
