@@ -19,11 +19,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
     const transactionService = new ViewTransactionsService(transactionRepository);
 
-    const transactions = transactionService.viewTransactions(userId);
+    const transactions = await transactionService.viewTransactions(userId);
 
-    return new ResourceResponse(transactions);
-
-    throw Error('');
+    return new ResourceResponse([...transactions]);
   } catch (error) {
     console.log(`[Get transaction/[transactions]]: error: ${error.message}`);
 

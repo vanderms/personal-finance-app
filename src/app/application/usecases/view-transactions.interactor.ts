@@ -54,7 +54,10 @@ export class ViewTransactionsInteractor {
         const transactions = response.data.map((transaction) => new Transaction(transaction));
         return transactions;
       }
-    } catch (error) {}
+    } catch (error) {
+      console.warn(`[ViewTransactionsInteractor.requestTransactions]: error: `, error);
+      return undefined;
+    }
 
     console.warn('[ViewTransactionsInteractor.requestTransactions]: unknown error.');
     this.notificationAdapter.push(new FailedToFetchDataNotification('user transactions'));
