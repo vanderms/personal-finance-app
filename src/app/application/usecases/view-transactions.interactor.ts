@@ -14,7 +14,7 @@ export class ViewTransactionsInteractor {
     private notificationAdapter: UserNotificationAdapter,
   ) {}
 
-  private cache = new BehaviorSubject<Transaction[] | undefined>([]);
+  private cache = new BehaviorSubject<Transaction[] | undefined>(undefined);
 
   private transactions$ = this.cache.pipe(
     switchMap(async (cache) => {
@@ -38,6 +38,7 @@ export class ViewTransactionsInteractor {
   }
 
   async _requestTransactions() {
+    console.log('[ViewTransactionsInteractor.requestTransactions] requesting transactions.');
     const user = await firstValueFrom(this.userAdapter.getCurrentUser());
 
     if (!user) {
