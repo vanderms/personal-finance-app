@@ -1,105 +1,112 @@
-<div class="dashboard-layout">
-  <app-nav active="Transactions"></app-nav>
-  <main class="mx-auto w-[91.46%]">
-    <header class="mt-6 flex h-14 items-center justify-between">
-      <h1 class="text-preset-1 text-neutral-900">Transactions</h1>
-      <button class="button-primary flex gap-1" (click)="openRecordTransactionDialog()">
-        + Record <span class="hidden md:inline"> New Transaction</span>
-      </button>
-    </header>
+<header class="mt-6 flex h-14 items-center justify-between">
+  <h1 class="text-preset-1 text-neutral-900">Transactions</h1>
+  <button class="button-primary flex gap-1" (click)="openRecordTransactionDialog()">
+    + Record <span class="hidden md:inline"> New Transaction</span>
+  </button>
+</header>
 
-    <section>
-      <table>
-        <thead>
-          <tr>
-            <th>Recipient / Sender</th>
-            <th>Category</th>
-            <th>Transaction Date</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (transaction of transactions(); track $index) {
-            <tr>
-              <td>{{ transaction.getCounterparty() }}</td>
-              <td>{{ transaction.getCategory() }}</td>
-              <td>{{ transaction.getDate() }}</td>
-              <td>{{ transaction.getAmount() }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </section>
-  </main>
-
-  <ui-dialog title="Record New Transaction">
-    <form class="mt-4 grid gap-4" method="post" (submit)="submitRecordTransactionForm($event)">
-      @if (formTransaction(); as transaction) {
-        <ui-select
-          label="Type"
-          [invalid]="typeTouched() && transaction.getTypeErrors().size > 0"
-          [errors]="transaction.getTypeErrors()"
+<section class="mt-8 rounded-lg bg-white px-5 py-6">
+  <table class="w-full">
+    <thead class="contents">
+      <tr
+        class="sr-only gap-8 border-b border-neutral-100 md:not-sr-only md:mb-3 md:grid md:w-full md:grid-cols-[1fr,5rem,5.5rem,5rem] md:py-3 lg:grid-cols-[1fr,7.5rem,7.5rem,7.5rem]"
+      >
+        <th class="text-preset-5 text-left text-neutral-500">Recipient / Sender</th>
+        <th class="text-preset-5 text-left text-neutral-500">Category</th>
+        <th class="text-preset-5 text-left text-neutral-500">Transaction Date</th>
+        <th class="text-preset-5 text-right text-neutral-500">Amount</th>
+      </tr>
+    </thead>
+    <tbody class="contents">
+      @for (transaction of transactions(); track $index) {
+        <tr
+          class="table__row grid w-full grid-cols-2 gap-1 py-4 md:grid-cols-[1fr,5rem,5.5rem,5rem] md:gap-8 lg:grid-cols-[1fr,7.5rem,7.5rem,7.5rem]"
         >
-          <ui-dropdown
-            name="Category"
-            [value]="transaction.getType()"
-            (componentChange)="transaction.setType($event)"
-            (componentBlur)="typeTouched.set(true)"
-          >
-            <ui-dropdown-option value="Expense">Expense</ui-dropdown-option>
-            <ui-dropdown-option value="Income">Income</ui-dropdown-option>
-          </ui-dropdown>
-        </ui-select>
-
-        <ui-textbox
-          label="Recipient / Sender"
-          [value]="transaction.getCounterparty()"
-          (componentChange)="transaction.setCounterparty($event)"
-          (componentBlur)="counterpartyTouched.set(true)"
-          [invalid]="counterpartyTouched() && transaction.getCounterpartyErrors().size > 0"
-          [errors]="transaction.getCounterpartyErrors()"
-        >
-        </ui-textbox>
-
-        <ui-select
-          label="Category"
-          [invalid]="categoryTouched() && transaction.getCategoryErrors().size > 0"
-          [errors]="transaction.getCategoryErrors()"
-        >
-          <ui-dropdown
-            name="Category"
-            [value]="transaction.getCategory()"
-            (componentChange)="transaction.setCategory($event)"
-            (componentBlur)="categoryTouched.set(true)"
-          >
-            @for (category of categories; track category) {
-              <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
-            }
-          </ui-dropdown>
-        </ui-select>
-        <ui-textbox
-          label="Date"
-          type="date"
-          [value]="convertDate(transaction.getDate())"
-          (componentChange)="transaction.setDate($event)"
-          (componentBlur)="dateTouched.set(true)"
-          [invalid]="dateTouched() && transaction.getDateErrors().size > 0"
-          [errors]="transaction.getDateErrors()"
-        >
-        </ui-textbox>
-        <ui-textbox
-          label="Amount"
-          type="number"
-          [value]="convertAmount(transaction.getAmount())"
-          (componentChange)="transaction.setAmount($event)"
-          (componentBlur)="amountTouched.set(true)"
-          [invalid]="amountTouched() && transaction.getAmountErrors().size > 0"
-          [errors]="transaction.getAmountErrors()"
-        >
-          <p ngProjectAs="ui-textbox-before">$</p>
-        </ui-textbox>
-        <button class="button-primary">Record Transaction</button>
+          <td class="text-preset-4-bold order-1 text-neutral-900">
+            {{ transaction.getCounterparty() }}
+          </td>
+          <td class="text-preset-5 order-3 text-neutral-500 md:order-2">
+            {{ transaction.getCategory() }}
+          </td>
+          <td class="text-preset-5 order-4 text-right text-neutral-500 md:order-3 md:text-left">
+            {{ transactionDate(transaction.getDate()) }}
+          </td>
+          <td class="text-preset-4-bold order-2 text-right text-neutral-900 md:order-4">
+            {{ transactionAmount(transaction) | currency: 'USD' : 'symbol' : '1.2-2' }}
+          </td>
+        </tr>
       }
-    </form>
-  </ui-dialog>
-</div>
+    </tbody>
+  </table>
+</section>
+
+<ui-dialog title="Record New Transaction">
+  <form class="mt-4 grid gap-4" method="post" (submit)="submitRecordTransactionForm($event)">
+    @if (formTransaction(); as transaction) {
+      <ui-select
+        label="Type"
+        [invalid]="typeTouched() && transaction.getTypeErrors().size > 0"
+        [errors]="transaction.getTypeErrors()"
+      >
+        <ui-dropdown
+          name="Category"
+          [value]="transaction.getType()"
+          (componentChange)="transaction.setType($event)"
+          (componentBlur)="typeTouched.set(true)"
+        >
+          <ui-dropdown-option value="Expense">Expense</ui-dropdown-option>
+          <ui-dropdown-option value="Income">Income</ui-dropdown-option>
+        </ui-dropdown>
+      </ui-select>
+
+      <ui-textbox
+        label="Recipient / Sender"
+        [value]="transaction.getCounterparty()"
+        (componentChange)="transaction.setCounterparty($event)"
+        (componentBlur)="counterpartyTouched.set(true)"
+        [invalid]="counterpartyTouched() && transaction.getCounterpartyErrors().size > 0"
+        [errors]="transaction.getCounterpartyErrors()"
+      >
+      </ui-textbox>
+
+      <ui-select
+        label="Category"
+        [invalid]="categoryTouched() && transaction.getCategoryErrors().size > 0"
+        [errors]="transaction.getCategoryErrors()"
+      >
+        <ui-dropdown
+          name="Category"
+          [value]="transaction.getCategory()"
+          (componentChange)="transaction.setCategory($event)"
+          (componentBlur)="categoryTouched.set(true)"
+        >
+          @for (category of categories; track category) {
+            <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
+          }
+        </ui-dropdown>
+      </ui-select>
+      <ui-textbox
+        label="Date"
+        type="date"
+        [value]="convertDate(transaction.getDate())"
+        (componentChange)="transaction.setDate($event)"
+        (componentBlur)="dateTouched.set(true)"
+        [invalid]="dateTouched() && transaction.getDateErrors().size > 0"
+        [errors]="transaction.getDateErrors()"
+      >
+      </ui-textbox>
+      <ui-textbox
+        label="Amount"
+        type="number"
+        [value]="convertAmount(transaction.getAmount())"
+        (componentChange)="transaction.setAmount($event)"
+        (componentBlur)="amountTouched.set(true)"
+        [invalid]="amountTouched() && transaction.getAmountErrors().size > 0"
+        [errors]="transaction.getAmountErrors()"
+      >
+        <p ngProjectAs="ui-textbox-before">$</p>
+      </ui-textbox>
+      <button class="button-primary">Record Transaction</button>
+    }
+  </form>
+</ui-dialog>

@@ -9,10 +9,10 @@
       <li>
         <a
           class="flex h-11 flex-col items-center justify-center gap-1 md:h-[4.125rem] lg:flex-row lg:justify-start lg:gap-4"
-          [ngClass]="[item.text === active ? 'lg:pl-7' : 'lg:pl-8']"
+          [ngClass]="[isActive(item.link, activeLink()) ? 'lg:pl-7' : 'lg:pl-8']"
           href=""
-          [attr.aria-current]="item.text === active ? 'page' : undefined"
-          [routerLink]="item.link"
+          [attr.aria-current]="isActive(item.link, activeLink()) ? 'page' : undefined"
+          [routerLink]="'/dashboard/' + item.link"
         >
           <ui-icon [iconName]="item.icon" />
           <span class="text-preset-5-bold lg:text-preset-3 hidden md:block">{{ item.text }}</span>
