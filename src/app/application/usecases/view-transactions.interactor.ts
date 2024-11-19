@@ -6,6 +6,8 @@ import { HttpAdapter } from '../adapters/http.adapter';
 import { UserNotificationAdapter } from '../adapters/user-notification.adapter';
 import { UserAdapter } from '../adapters/user.adapter';
 
+export const SortOptions = ['Latest', 'Oldest', 'A to Z', 'Z to A', 'Highest', 'Lowest'] as const;
+
 @Singleton()
 export class ViewTransactionsInteractor {
   constructor(

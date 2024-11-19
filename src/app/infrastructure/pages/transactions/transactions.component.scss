@@ -1,3 +1,7 @@
 .table__row:not(:last-child) {
   border-bottom: 1px solid var(--neutral-100);
 }
+
+ui-icon.md\:hidden {
+  display: none;
+}

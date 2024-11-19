@@ -6,7 +6,76 @@
 </header>
 
 <section class="mt-8 rounded-lg bg-white px-5 py-6">
-  <table class="w-full">
+  <form
+    role="search"
+    class="grid grid-cols-[1fr,1.25rem,1.25rem] items-center gap-6 md:grid-cols-[1fr,10.5625rem,15.3125rem]"
+  >
+    <label class="relative mr-auto flex max-w-[20rem] items-center"
+      ><span class="sr-only">Search Transaction</span>
+      <input
+        type="search"
+        class="h-[2.8125rem] w-full rounded-lg border border-neutral-300 pl-4 pr-10"
+        placeholder="Search Transaction"
+      />
+      <ui-icon iconName="search" class="absolute right-5"></ui-icon>
+    </label>
+
+    <div class="relative flex flex-col items-end">
+      <button
+        aria-label="sort transactions"
+        type="button"
+        class="w-full"
+        (click)="sortDropdown.openDropdown()"
+      >
+        <ui-icon iconName="sort" class="md:hidden"></ui-icon>
+        <span class="hidden w-full justify-between md:flex md:w-full md:items-center">
+          <span class="text-preset-4 text-neutral-500">Sort by</span>
+          <span
+            class="flex h-[2.8125rem] w-[7rem] items-center justify-between rounded-lg border border-neutral-300 px-5"
+          >
+            <span class="text-preset-4 text-neutral-900"> Latest </span>
+
+            <ui-icon iconName="caret-down"></ui-icon>
+          </span>
+        </span>
+      </button>
+      <ui-dropdown name="tableSort" #sortDropdown class="right-0 min-w-[11.25rem]">
+        @for (option of sortOptions; track $index) {
+          <ui-dropdown-option [value]="option"
+            ><span>{{ option }}</span></ui-dropdown-option
+          >
+        }
+      </ui-dropdown>
+    </div>
+
+    <div class="relative flex flex-col items-end">
+      <button
+        aria-label="sort transactions"
+        type="button"
+        class="w-full"
+        (click)="categoryDropdown.openDropdown()"
+      >
+        <ui-icon iconName="filter" class="md:hidden"></ui-icon>
+        <span class="hidden w-full justify-between md:flex md:w-full md:items-center">
+          <span class="text-preset-4 text-neutral-500">Category</span>
+          <span
+            class="flex h-[2.8125rem] w-[11.0625rem] items-center justify-between rounded-lg border border-neutral-300 px-5"
+          >
+            <span class="text-preset-4 text-neutral-900"> Latest </span>
+
+            <ui-icon iconName="caret-down"></ui-icon>
+          </span>
+        </span>
+      </button>
+
+      <ui-dropdown name="categoryFilter" #categoryDropdown class="right-0 min-w-[11.25rem]">
+        @for (category of categories; track category) {
+          <ui-dropdown-option [value]="category">{{ category }}</ui-dropdown-option>
+        }
+      </ui-dropdown>
+    </div>
+  </form>
+  <table class="mt-6 w-full">
     <thead class="contents">
       <tr
         class="sr-only gap-8 border-b border-neutral-100 md:not-sr-only md:mb-3 md:grid md:w-full md:grid-cols-[1fr,5rem,5.5rem,5rem] md:py-3 lg:grid-cols-[1fr,7.5rem,7.5rem,7.5rem]"

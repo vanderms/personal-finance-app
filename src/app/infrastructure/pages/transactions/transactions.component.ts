@@ -2,7 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RecordTransactionInteractor } from '../../../application/usecases/record-transaction.interactor';
-import { ViewTransactionsInteractor } from '../../../application/usecases/view-transactions.interactor';
+import {
+  SortOptions,
+  ViewTransactionsInteractor,
+} from '../../../application/usecases/view-transactions.interactor';
 import { Category } from '../../../domain/category.model';
 import { Transaction } from '../../../domain/transaction.model';
 import { DialogComponent } from '../../components/dialog/dialog.component';
@@ -11,6 +14,7 @@ import { DropdownComponent } from '../../components/dropdown/dropdown.component'
 import { NavComponent } from '../../components/nav/nav.component';
 import { SelectComponent } from '../../components/select/select.component';
 import { TextboxComponent } from '../../components/textbox/textbox.component';
+import { IconComponent } from '../../components/icon/icon.component';
 
 type Touched = {
   counterparty: boolean;
@@ -30,6 +34,7 @@ type Touched = {
     DropdownComponent,
     DropdownOptionComponent,
     SelectComponent,
+    IconComponent,
   ],
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.scss',
@@ -130,4 +135,6 @@ export class TransactionsComponent {
       this.markAllAsTouched();
     }
   }
+
+  sortOptions = SortOptions;
 }
