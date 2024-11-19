@@ -43,7 +43,7 @@ export class UserAdapterImpl extends UserAdapter {
     if (user === null) {
       this.router.navigate(['/']);
     } else {
-      this.router.navigate(['overview']);
+      this.router.navigate(['dashboard/overview']);
     }
   }
 }
