@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RecordTransactionInteractor } from '../../../application/usecases/record-transaction.interactor';
 import {
+  AllTransactions,
   SortOptions,
   ViewTransactionsInteractor,
 } from '../../../application/usecases/view-transactions.interactor';
@@ -136,5 +137,9 @@ export class TransactionsComponent {
     }
   }
 
-  sortOptions = SortOptions;
+  protected readonly sortOptions = SortOptions;
+
+  protected readonly filterOptions = [AllTransactions, ...this.categories];
+
+  protected filters$ = this.viewInteractor.getFilters();
 }
